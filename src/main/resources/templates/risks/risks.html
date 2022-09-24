@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <title>Риски, вызванные климатическими изменениями</title>
+</head>
+<body>
+<div class="container">
+    <h3> <span th:text="${subject.name}"></span></h3>
+    <hr>
+    <h3>Риски, вызванные климатическими изменениями</h3>
+    <hr>
+
+        <a th:href="@{/risks/add(subjectId=${subject.id})}"
+       class="btn btn-primary btn-sm mb-3">
+        Добавить риск
+    </a>
+
+    <table class="table table-hover table-bordered table-striped">
+        <thead class="thead-dark">
+        <tr>
+            <th>Наименование риска</th>
+            <th>Действие</th>
+        </tr>>
+        </thead>>
+        <tbody>
+        <tr th:each="tempRisk : ${allRisks}">
+            <td th:text="${tempRisk.name}"/>
+            <td>
+                <a th:href="@{/risks/update(riskId=${tempRisk.id})}"
+                   class="btn btn-outline-secondary btn-sm">
+                    Изменить
+                </a>
+
+                <a th:href="@{/risks/delete(riskId=${tempRisk.id}, subjectId=${tempRisk.subject.id})}"
+                   class="btn btn-outline-danger btn-sm"
+                   onclick="if (!(confirm('Вы действительно хотите удалить этот климатический риск? Все связанные с ним адаптационные меры также будут удалены'))) return false">
+                    Удалить
+                </a>
+
+                <a th:href="@{/measures(riskId=${tempRisk.id})}"
+                   class="btn btn-primary btn-sm">
+                    Перейти к списку адаптационных мер
+                </a>
+
+            </td>>
+        </tr>
+        </tbody>
+    </table>
+    <a th:href="@{/subjects}">Назад к списку субъектов РФ</a>
+</div>
+</body>
+</html>

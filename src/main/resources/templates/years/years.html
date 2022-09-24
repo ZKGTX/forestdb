@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <title>Отчетные годы</title>
+</head>
+<body>
+<div class="container">
+    <h3> <span th:text="${action.name}"></span></h3>
+    <hr>
+    <h3>Отчетные годы</h3>
+    <hr>
+
+    <a th:href="@{/years/add(actionId=${action.id})}"
+       class="btn btn-primary btn-sm mb-3">
+        Добавить отчетный год
+    </a>
+
+    <table class="table table-hover table-bordered table-striped">
+        <thead class="thead-dark">
+        <tr>
+            <th>Год</th>
+            <th>Объем работ (по плану)</th>
+            <th>Объем работ (фактический)</th>
+            <th>Ед.изм. работ</th>
+            <th>Стоимость работ (по плану)</th>
+            <th>Стоимость работ (фактическая)</th>
+            <th>Ед.изм. стоимости</th>
+            <th>Примечание</th>
+            <th>Действие</th>
+        </tr>>
+        </thead>>
+        <tbody>
+        <tr th:each="tempReportingYear : ${allReportingYears}">
+            <td th:text="${tempReportingYear.year}"/>
+
+            <td th:text="${tempReportingYear.plannedWorkAmount}"/>
+
+            <td th:text="${tempReportingYear.actualWorkAmount}"/>
+
+            <td th:text="${tempReportingYear.workMeasuringUnits}"/>
+
+            <td th:text="${tempReportingYear.plannedWorkCost}"/>
+
+            <td th:text="${tempReportingYear.actualWorkCost}"/>
+
+            <td th:text="${tempReportingYear.costMeasuringUnits}"/>
+
+            <td th:text="${tempReportingYear.commentary}"/>
+
+            <td>
+                <a th:href="@{/years/update(reportingYearId=${tempReportingYear.id})}"
+                   class="btn btn-outline-secondary btn-sm">
+                    Изменить
+                </a>
+
+                <a th:href="@{/years/delete(reportingYearId=${tempReportingYear.id}, actionId=${tempReportingYear.action.id})}"
+                   class="btn btn-outline-danger btn-sm"
+                   onclick="if (!(confirm('Вы действительно хотите удалить этот отчетный год?'))) return false">
+                    Удалить
+                </a>
+
+            </td>>
+        </tr>
+        </tbody>
+    </table>
+    <a th:href="@{/actions(measureId=${action.measure.id})}">Назад к списку мероприятий</a>
+</div>
+</body>
+</html>
