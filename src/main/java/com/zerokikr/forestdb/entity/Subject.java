@@ -2,6 +2,9 @@ package com.zerokikr.forestdb.entity;
 
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.util.List;
 import java.util.Objects;
 
@@ -15,6 +18,8 @@ public class Subject {
     private Long id;
 
     @Column(name = "name")
+    @NotNull(message = "название субъекта РФ не может быть пустым")
+    @Pattern(regexp="[а-яёА-ЯЁ ,.()-]+", message = "название субъекта РФ должно состоять только из русских букв")
     private String name;
 
     @OneToMany(mappedBy = "subject", fetch = FetchType.LAZY)

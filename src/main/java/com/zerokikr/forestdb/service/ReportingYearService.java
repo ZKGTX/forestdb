@@ -9,7 +9,12 @@ import com.zerokikr.forestdb.repository.ActionRepository;
 import com.zerokikr.forestdb.repository.ReportingYearRepository;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 
 @Service
 public class ReportingYearService {
@@ -34,6 +39,14 @@ public class ReportingYearService {
 
     public void deleteReportingYearById (Long id) {
         reportingYearRepository.deleteById(id);
+    }
+
+    public String convertCommasToDots (String s) {
+        return s.replace(',','.');
+    }
+
+    public String removeStars (String s) {
+        return s.replaceAll("[*]+", "");
     }
 
 

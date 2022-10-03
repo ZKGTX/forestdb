@@ -5,15 +5,16 @@ import com.zerokikr.forestdb.entity.Risk;
 import com.zerokikr.forestdb.service.MeasureService;
 import com.zerokikr.forestdb.service.RiskService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Controller
@@ -26,6 +27,12 @@ public class MeasureController {
     public MeasureController(MeasureService measureService, RiskService riskService) {
         this.measureService = measureService;
         this.riskService = riskService;
+    }
+
+    @InitBinder
+    public void initBinder (WebDataBinder dataBinder) {
+        StringTrimmerEditor stringTrimmerEditor = new StringTrimmerEditor(true);
+        dataBinder.registerCustomEditor(String.class, stringTrimmerEditor);
     }
 
     @GetMapping("/measures")
@@ -61,7 +68,10 @@ public class MeasureController {
     }
 
     @PostMapping("/measures/save")
-    public ModelAndView saveMeasure(ModelMap theModel, @ModelAttribute("measure") Measure measure) {
+    public ModelAndView saveMeasure(ModelMap theModel, @ModelAttribute("measure") @Valid Measure measure, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return new ModelAndView( "measures/addMeasure");
+        }
         measureService.saveMeasure(measure);
         theModel.addAttribute("riskId", measure.getRisk().getId());
         return new ModelAndView("redirect:/measures", theModel);

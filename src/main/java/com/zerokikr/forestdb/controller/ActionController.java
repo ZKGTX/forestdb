@@ -5,15 +5,16 @@ import com.zerokikr.forestdb.entity.Action;
 import com.zerokikr.forestdb.entity.Measure;
 import com.zerokikr.forestdb.service.ActionService;
 import com.zerokikr.forestdb.service.MeasureService;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Controller
@@ -26,6 +27,12 @@ public class ActionController {
     public ActionController(ActionService actionService, MeasureService measureService) {
         this.actionService = actionService;
         this.measureService = measureService;
+    }
+
+    @InitBinder
+    public void initBinder (WebDataBinder dataBinder) {
+        StringTrimmerEditor stringTrimmerEditor = new StringTrimmerEditor(true);
+        dataBinder.registerCustomEditor(String.class, stringTrimmerEditor);
     }
 
     @GetMapping("/actions")
@@ -47,7 +54,10 @@ public class ActionController {
     }
 
     @PostMapping("/actions/save")
-    public ModelAndView saveAction(ModelMap theModel, @ModelAttribute("action") Action action) {
+    public ModelAndView saveAction(ModelMap theModel, @ModelAttribute("action") @Valid Action action, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return new ModelAndView( "actions/addAction");
+        }
         actionService.saveAction(action);
         theModel.addAttribute("measureId", action.getMeasure().getId());
         return new ModelAndView("redirect:/actions", theModel);

@@ -12,15 +12,22 @@
 </head>
 <body>
 <div class="container">
+    <h3> <span th:text="${measure.risk.subject.name}"></span></h3>
+    <hr>
+    <h3> <span th:text="${measure.risk.name}"></span></h3>
+    <hr>
     <h3> <span th:text="${measure.name}"></span></h3>
     <hr>
     <h3>Мероприятия</h3>
     <hr>
 
     <a th:href="@{/actions/add(measureId=${measure.id})}"
-       class="btn btn-primary btn-sm mb-3">
+       class="btn btn-success btn-sm mb-3">
         Добавить мероприятие
     </a>
+
+    <a th:href="@{/measures(riskId=${measure.risk.id})}" class="btn btn-outline-primary btn-sm mb-3">Назад к списку адаптационных мер</a>
+
 
     <table class="table table-hover table-bordered table-striped">
         <thead class="thead-dark">
@@ -33,10 +40,12 @@
         <tr th:each="tempAction : ${allActions}">
             <td th:text="${tempAction.name}"/>
 
-
-
-
             <td>
+                <a th:href="@{/years(actionId=${tempAction.id})}"
+                   class="btn btn-info btn-sm">
+                    Годовые отчеты по мероприятию
+                </a>
+
                 <a th:href="@{/actions/update(actionId=${tempAction.id})}"
                    class="btn btn-outline-secondary btn-sm">
                     Изменить
@@ -48,10 +57,7 @@
                     Удалить
                 </a>
 
-                <a th:href="@{/years(actionId=${tempAction.id})}"
-                   class="btn btn-primary btn-sm">
-                    Годовые отчеты по мероприятию
-                </a>
+
 
             </td>>
         </tr>

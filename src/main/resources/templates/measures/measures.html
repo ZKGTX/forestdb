@@ -12,15 +12,19 @@
 </head>
 <body>
 <div class="container">
+    <h3> <span th:text="${risk.subject.name}"></span></h3>
+    <hr>
     <h3> <span th:text="${risk.name}"></span></h3>
     <hr>
     <h3>Адаптационные меры</h3>
     <hr>
 
     <a th:href="@{/measures/add(riskId=${risk.id})}"
-       class="btn btn-primary btn-sm mb-3">
-        Добавить меру
+       class="btn btn-success btn-sm mb-3">
+        Добавить адаптационную меру
     </a>
+
+    <a th:href="@{/risks(subjectId=${risk.subject.id})}" class="btn btn-outline-primary btn-sm mb-3">Назад к списку климатических рисков</a>
 
     <table class="table table-hover table-bordered table-striped">
         <thead class="thead-dark">
@@ -33,6 +37,11 @@
         <tr th:each="tempMeasure : ${allMeasures}">
             <td th:text="${tempMeasure.name}"/>
             <td>
+                <a th:href="@{/actions(measureId=${tempMeasure.id})}"
+                   class="btn btn-info btn-sm">
+                    К списку мероприятий
+                </a>
+
                 <a th:href="@{/measures/update(measureId=${tempMeasure.id})}"
                    class="btn btn-outline-secondary btn-sm">
                     Изменить
@@ -44,10 +53,7 @@
                     Удалить
                 </a>
 
-                <a th:href="@{/actions(measureId=${tempMeasure.id})}"
-                   class="btn btn-primary btn-sm">
-                    Перейти к списку мероприятий
-                </a>
+
 
             </td>>
         </tr>

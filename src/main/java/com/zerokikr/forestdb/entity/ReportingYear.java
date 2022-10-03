@@ -2,6 +2,7 @@ package com.zerokikr.forestdb.entity;
 
 
 import javax.persistence.*;
+import javax.validation.constraints.*;
 import java.math.BigDecimal;
 import java.util.Objects;
 
@@ -15,6 +16,9 @@ public class ReportingYear {
     private Long id;
 
     @Column(name = "year")
+    @NotNull(message = "необходимо указать год")
+    @Digits(integer = 4, fraction = 0, message="только 4 цифры")
+    @Min(value = 2000, message = "некорректный год. только 4 цифры")
     private Integer year;
 
     @ManyToOne
@@ -22,21 +26,34 @@ public class ReportingYear {
     private Action action;
 
     @Column(name = "planned_work_amount")
-    private Double plannedWorkAmount;
+    @NotNull(message = "необходимо указать запланированный объем работ")
+    @Pattern(regexp="[0-9,.*]+", message = "допустимые символы: цифры (0-9), разделители (.) (,), примечания (*)")
+    private String plannedWorkAmount;
 
     @Column(name = "actual_work_amount")
-    private Double actualWorkAmount;
+    @NotNull(message = "необходимо указать выполненный объем работ")
+    @Pattern(regexp="[0-9,.*]+", message = "допустимые символы: цифры (0-9), разделители (.) (,), примечания (*)")
+    private String actualWorkAmount;
 
     @Column(name = "work_measuring_units")
+    @NotNull(message = "необходимо указать единицу измерения работ")
+    @Pattern(regexp="[а-яёА-ЯЁ ,.()-]+", message = "только русские буквы")
     private String workMeasuringUnits;
 
     @Column(name = "planned_work_cost")
-    private BigDecimal plannedWorkCost;
+    @NotNull(message = "необходимо указать запланированную стоимость работ")
+    @Pattern(regexp="[0-9,.*]+", message = "допустимые символы: цифры (0-9), разделители (.) (,), примечания (*)")
+    private String plannedWorkCost;
+
 
     @Column(name = "actual_work_cost")
-    private BigDecimal actualWorkCost;
+    @NotNull(message = "необходимо указать фактическую стоимость работ")
+    @Pattern(regexp="[0-9,.*]+", message = "допустимые символы: цифры (0-9), разделители (.) (,), примечания (*)")
+    private String actualWorkCost;
 
     @Column(name = "cost_measuring_units")
+    @NotNull(message = "необходимо указать единицу измерения стоимости")
+    @Pattern(regexp="[а-яёА-ЯЁ ,.()-]+", message = "только русские буквы")
     private String costMeasuringUnits;
 
     @Column(name = "commentary")
@@ -45,7 +62,7 @@ public class ReportingYear {
     public ReportingYear() {
     }
 
-    public ReportingYear(Integer year, Action action, Double plannedWorkAmount, Double actualWorkAmount, BigDecimal plannedWorkCost, BigDecimal actualWorkCost) {
+    public ReportingYear(Integer year, Action action, String plannedWorkAmount, String actualWorkAmount, String plannedWorkCost, String actualWorkCost) {
         this.year = year;
         this.action = action;
         this.plannedWorkAmount = plannedWorkAmount;
@@ -78,19 +95,19 @@ public class ReportingYear {
         this.action = action;
     }
 
-    public Double getPlannedWorkAmount() {
+    public String getPlannedWorkAmount() {
         return plannedWorkAmount;
     }
 
-    public void setPlannedWorkAmount(Double plannedWorkAmount) {
+    public void setPlannedWorkAmount(String plannedWorkAmount) {
         this.plannedWorkAmount = plannedWorkAmount;
     }
 
-    public Double getActualWorkAmount() {
+    public String getActualWorkAmount() {
         return actualWorkAmount;
     }
 
-    public void setActualWorkAmount(Double actualWorkAmount) {
+    public void setActualWorkAmount(String actualWorkAmount) {
         this.actualWorkAmount = actualWorkAmount;
     }
 
@@ -102,19 +119,19 @@ public class ReportingYear {
         this.workMeasuringUnits = workMeasuringUnits;
     }
 
-    public BigDecimal getPlannedWorkCost() {
+    public String getPlannedWorkCost() {
         return plannedWorkCost;
     }
 
-    public void setPlannedWorkCost(BigDecimal plannedWorkCost) {
+    public void setPlannedWorkCost(String plannedWorkCost) {
         this.plannedWorkCost = plannedWorkCost;
     }
 
-    public BigDecimal getActualWorkCost() {
+    public String getActualWorkCost() {
         return actualWorkCost;
     }
 
-    public void setActualWorkCost(BigDecimal actualWorkCost) {
+    public void setActualWorkCost(String actualWorkCost) {
         this.actualWorkCost = actualWorkCost;
     }
 

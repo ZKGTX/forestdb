@@ -2,6 +2,8 @@ package com.zerokikr.forestdb.entity;
 
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.util.List;
 import java.util.Objects;
 
@@ -14,6 +16,8 @@ public class Measure {
     private Long id;
 
     @Column(name = "name")
+    @NotNull(message = "название адаптационной меры не может быть пустым")
+    @Pattern(regexp="[а-яёА-ЯЁ ,.()-]+", message = "название адаптационной меры должно состоять только из русских букв")
     private String name;
 
     @ManyToOne

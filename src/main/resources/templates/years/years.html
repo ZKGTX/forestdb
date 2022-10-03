@@ -12,15 +12,24 @@
 </head>
 <body>
 <div class="container">
+    <h3> <span th:text="${action.measure.risk.subject.name}"></span></h3>
+    <hr>
+    <h3> <span th:text="${action.measure.risk.name}"></span></h3>
+    <hr>
+    <h3> <span th:text="${action.measure.name}"></span></h3>
+    <hr>
     <h3> <span th:text="${action.name}"></span></h3>
     <hr>
     <h3>Отчетные годы</h3>
     <hr>
 
     <a th:href="@{/years/add(actionId=${action.id})}"
-       class="btn btn-primary btn-sm mb-3">
+       class="btn btn-success btn-sm mb-3">
         Добавить отчетный год
     </a>
+
+    <a th:href="@{/actions(measureId=${action.measure.id})}" class="btn btn-outline-primary btn-sm mb-3">Назад к списку мероприятий</a>
+    <a th:href="@{/subjects}" class="btn btn-outline-secondary btn-sm mb-3">Назад к списку субъектов РФ</a>
 
     <table class="table table-hover table-bordered table-striped">
         <thead class="thead-dark">

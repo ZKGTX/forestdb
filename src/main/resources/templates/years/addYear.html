@@ -31,23 +31,45 @@
         <input type="text" th:field="*{year}"
                class="form-control mb-4 col-4" placeholder="год">
 
+        <p th:if="${#fields.hasErrors('year')}" th:errorclass="error" th:errors="*{year}"
+           class="alert alert-danger" role="alert"/>
+
         <input type="text" th:field="*{plannedWorkAmount}"
                class="form-control mb-4 col-4" placeholder="запланированный объем работ">
+
+        <p th:if="${#fields.hasErrors('plannedWorkAmount')}" th:errorclass="error" th:errors="*{plannedWorkAmount}"
+           class="alert alert-danger" role="alert"/>
+
 
         <input type="text" th:field="*{actualWorkAmount}"
                class="form-control mb-4 col-4" placeholder="выполненный объем работ">
 
+        <p th:if="${#fields.hasErrors('actualWorkAmount')}" th:errorclass="error" th:errors="*{actualWorkAmount}"
+           class="alert alert-danger" role="alert"/>
+
         <input type="text" th:field="*{workMeasuringUnits}"
                class="form-control mb-4 col-4" placeholder="ед. изм. работ">
+
+        <p th:if="${#fields.hasErrors('workMeasuringUnits')}" th:errorclass="error" th:errors="*{workMeasuringUnits}"
+           class="alert alert-danger" role="alert"/>
 
         <input type="text" th:field="*{plannedWorkCost}"
                class="form-control mb-4 col-4" placeholder="запланированная стоимость работ">
 
+        <p th:if="${#fields.hasErrors('plannedWorkCost')}" th:errorclass="error" th:errors="*{plannedWorkCost}"
+           class="alert alert-danger" role="alert"/>
+
         <input type="text" th:field="*{actualWorkCost}"
                class="form-control mb-4 col-4" placeholder="фактическая стоимость работ">
 
+        <p th:if="${#fields.hasErrors('actualWorkCost')}" th:errorclass="error" th:errors="*{actualWorkCost}"
+           class="alert alert-danger" role="alert"/>
+
         <input type="text" th:field="*{costMeasuringUnits}"
                class="form-control mb-4 col-4" placeholder="ед. изм. стоимости">
+
+        <p th:if="${#fields.hasErrors('costMeasuringUnits')}" th:errorclass="error" th:errors="*{costMeasuringUnits}"
+           class="alert alert-danger" role="alert"/>
 
         <input type="text" th:field="*{commentary}"
                class="form-control mb-4 col-4" placeholder="примечание">

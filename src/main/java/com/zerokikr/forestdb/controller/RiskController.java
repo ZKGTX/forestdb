@@ -5,12 +5,16 @@ import com.zerokikr.forestdb.entity.Subject;
 import com.zerokikr.forestdb.service.RiskService;
 import com.zerokikr.forestdb.service.SubjectService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Controller
@@ -23,6 +27,12 @@ public class RiskController {
     public RiskController(RiskService riskService, SubjectService subjectService) {
         this.riskService = riskService;
         this.subjectService = subjectService;
+    }
+
+    @InitBinder
+    public void initBinder (WebDataBinder dataBinder) {
+        StringTrimmerEditor stringTrimmerEditor = new StringTrimmerEditor(true);
+        dataBinder.registerCustomEditor(String.class, stringTrimmerEditor);
     }
 
     @GetMapping("/risks")
@@ -58,7 +68,10 @@ public class RiskController {
     }
 
     @PostMapping("/risks/save")
-    public ModelAndView saveRisk(ModelMap theModel, @ModelAttribute("risk") Risk risk) {
+    public ModelAndView saveRisk(ModelMap theModel, @ModelAttribute("risk") @Valid Risk risk, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return new ModelAndView( "risks/addRisk");
+        }
         riskService.saveRisk(risk);
         theModel.addAttribute("subjectId", risk.getSubject().getId());
         return new ModelAndView("redirect:/risks", theModel);

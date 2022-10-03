@@ -5,15 +5,17 @@ import com.zerokikr.forestdb.entity.Action;
 import com.zerokikr.forestdb.entity.ReportingYear;
 import com.zerokikr.forestdb.service.ActionService;
 import com.zerokikr.forestdb.service.ReportingYearService;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.validation.Valid;
+import java.math.BigDecimal;
 import java.util.List;
 
 @Controller
@@ -27,6 +29,13 @@ public class ReportingYearController {
     public ReportingYearController(ReportingYearService reportingYearService, ActionService actionService) {
         this.reportingYearService = reportingYearService;
         this.actionService = actionService;
+    }
+
+    @InitBinder
+    public void initBinder (WebDataBinder dataBinder) {
+        StringTrimmerEditor stringTrimmerEditor = new StringTrimmerEditor(true);
+        dataBinder.registerCustomEditor(String.class, stringTrimmerEditor);
+
     }
 
     @GetMapping("/years")
@@ -48,7 +57,10 @@ public class ReportingYearController {
     }
 
     @PostMapping("/years/save")
-    public ModelAndView saveReportingYear(ModelMap theModel, @ModelAttribute("reportingYear") ReportingYear reportingYear) {
+    public ModelAndView saveReportingYear(ModelMap theModel, @ModelAttribute("reportingYear") @Valid ReportingYear reportingYear, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return new ModelAndView( "years/addYear");
+        }
         reportingYearService.saveReportingYear(reportingYear);
         theModel.addAttribute("actionId", reportingYear.getAction().getId());
         return new ModelAndView("redirect:/years", theModel);

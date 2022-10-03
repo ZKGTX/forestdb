@@ -2,6 +2,8 @@ package com.zerokikr.forestdb.entity;
 
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.util.List;
 import java.util.Objects;
 
@@ -15,6 +17,7 @@ public class Action {
     private Long id;
 
     @Column(name = "name")
+    @NotNull(message = "название мероприятия не может быть пустым")
     private String name;
 
     @OneToMany(mappedBy = "action", fetch = FetchType.LAZY)

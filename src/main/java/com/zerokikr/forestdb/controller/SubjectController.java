@@ -3,11 +3,15 @@ package com.zerokikr.forestdb.controller;
 import com.zerokikr.forestdb.entity.Subject;
 import com.zerokikr.forestdb.service.SubjectService;
 import com.zerokikr.forestdb.utility.SubjectExcelExporter;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -22,6 +26,12 @@ public class SubjectController {
 
     public SubjectController(SubjectService subjectService) {
         this.subjectService = subjectService;
+    }
+
+    @InitBinder
+    public void initBinder (WebDataBinder dataBinder) {
+        StringTrimmerEditor stringTrimmerEditor = new StringTrimmerEditor(true);
+        dataBinder.registerCustomEditor(String.class, stringTrimmerEditor);
     }
 
     @GetMapping()
@@ -52,7 +62,10 @@ public class SubjectController {
     }
 
     @PostMapping("/save")
-    public String saveSubject(@ModelAttribute("subject") Subject subject) {
+    public String saveSubject(@ModelAttribute("subject") @Valid Subject subject, BindingResult result) {
+        if (result.hasErrors()) {
+            return "subjects/addSubject";
+        }
         subjectService.saveSubject(subject);
         return "redirect:/subjects";
     }

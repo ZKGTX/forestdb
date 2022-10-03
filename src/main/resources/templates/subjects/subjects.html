@@ -8,15 +8,15 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
-    <title>Субъекты РФ</title>
+    <title>Субъекты Российской Федерации</title>
 </head>
 <body>
 <div class="container">
-    <h3>Субъекты РФ</h3>
+    <h3>Субъекты Российской Федерации</h3>
 <hr>
 
     <a th:href="@{/subjects/add}"
-       class="btn btn-primary btn-sm mb-3">
+       class="btn btn-success btn-sm mb-3">
         Добавить субъект РФ
     </a>
 
@@ -31,6 +31,17 @@
     <tr th:each="tempSubject : ${allSubjects}">
         <td th:text="${tempSubject.name}"/>
         <td>
+
+            <a th:href="@{/risks(subjectId=${tempSubject.id})}"
+               class="btn btn-info btn-sm">
+                К списку климатических рисков
+            </a>
+
+            <a th:href="@{/subjects/export}"
+               class="btn btn-success btn-sm">
+                Получить отчет
+            </a>
+
             <a th:href="@{/subjects/update(subjectId=${tempSubject.id})}"
                 class="btn btn-outline-secondary btn-sm">
                 Изменить
@@ -42,15 +53,7 @@
                 Удалить
             </a>
 
-            <a th:href="@{/risks(subjectId=${tempSubject.id})}"
-                class="btn btn-primary btn-sm">
-                Перейти к списку рисков
-            </a>
 
-            <a th:href="@{/subjects/export}"
-                class="btn btn-success btn-sm">
-                Получить отчет
-            </a>
         </td>>
     </tr>
     </tbody>
