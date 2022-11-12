@@ -12,6 +12,10 @@
 </head>
 <body>
 <div class="container">
+    <h1>
+        <a th:href="@{/doLogout}" class="btn btn-outline-secondary btn-sm mb-3 pull-right"
+           onclick="if (!(confirm('Вы действительно хотите завершить работу и выйти из системы?))) return false"> Выйти из системы </a>
+    </h1>
     <h3> <span th:text="${measure.risk.subject.name}"></span></h3>
     <hr>
     <h3> <span th:text="${measure.risk.name}"></span></h3>
@@ -22,15 +26,15 @@
     <hr>
 
     <a th:href="@{/actions/add(measureId=${measure.id})}"
-       class="btn btn-success btn-sm mb-3">
-        Добавить мероприятие
+       class="btn btn-success btn-lg mb-3">
+        + добавить новое мероприятие
     </a>
 
-    <a th:href="@{/measures(riskId=${measure.risk.id})}" class="btn btn-outline-primary btn-sm mb-3">Назад к списку адаптационных мер</a>
+    <a th:href="@{/measures(riskId=${measure.risk.id})}" class="btn btn-outline-primary btn-sm mb-3"> ← назад к списку адаптационных мер</a>
 
 
     <table class="table table-hover table-bordered table-striped">
-        <thead class="thead-dark">
+        <thead class="thead-light">
         <tr>
             <th>Название мероприятия</th>
             <th>Действие</th>
@@ -43,18 +47,18 @@
             <td>
                 <a th:href="@{/years(actionId=${tempAction.id})}"
                    class="btn btn-info btn-sm">
-                    Годовые отчеты по мероприятию
+                    → список ежегодных отчетов по мероприятию
                 </a>
 
                 <a th:href="@{/actions/update(actionId=${tempAction.id})}"
                    class="btn btn-outline-secondary btn-sm">
-                    Изменить
+                    изменить мероприятие
                 </a>
 
                 <a th:href="@{/actions/delete(actionId=${tempAction.id}, measureId=${tempAction.measure.id})}"
                    class="btn btn-outline-danger btn-sm"
                    onclick="if (!(confirm('Вы действительно хотите удалить это мероприятие? Все связанные с ним годовые отчеты также будут удалены.'))) return false">
-                    Удалить
+                    удалить мероприятие
                 </a>
 
 

@@ -12,16 +12,21 @@
 </head>
 <body>
 <div class="container">
-    <h3>Субъекты Российской Федерации</h3>
+    <h1>
+        <a th:href="@{/doLogout}" class="btn btn-outline-secondary btn-sm mb-3 pull-right"
+           onclick="if (!(confirm('Вы действительно хотите завершить работу и выйти из системы.'))) return false"> Выйти из системы </a>
+    </h1>
+    <h1>Субъекты Российской Федерации: </h1>
 <hr>
 
     <a th:href="@{/subjects/add}"
-       class="btn btn-success btn-sm mb-3">
-        Добавить субъект РФ
+       class="btn btn-success btn-lg mb-3">
+        + добавить субъект РФ
     </a>
 
-<table class="table table-hover table-bordered table-striped">
-    <thead class="thead-dark">
+
+<table class="table table-hover table-sm table-striped">
+    <thead class="thead-light">
         <tr>
             <th>Название субъекта</th>
             <th>Действие</th>
@@ -34,25 +39,24 @@
 
             <a th:href="@{/risks(subjectId=${tempSubject.id})}"
                class="btn btn-info btn-sm">
-                К списку климатических рисков
+                → список климатических рисков
             </a>
 
-            <a th:href="@{/subjects/export}"
+            <a th:href="@{/subjects/reports(subjectId = ${tempSubject.id})}"
                class="btn btn-success btn-sm">
-                Получить отчет
+                отчеты по субъекту
             </a>
 
             <a th:href="@{/subjects/update(subjectId=${tempSubject.id})}"
                 class="btn btn-outline-secondary btn-sm">
-                Изменить
+                изменить субъект
             </a>
 
             <a th:href="@{/subjects/delete(subjectId=${tempSubject.id})}"
                 class="btn btn-outline-danger btn-sm"
                 onclick="if (!(confirm('Вы действительно хотите удалить этот субъект РФ? Все связанные с ним записи о рисках также будут удалены.'))) return false">
-                Удалить
+                удалить субъект
             </a>
-
 
         </td>>
     </tr>

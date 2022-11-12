@@ -1,8 +1,10 @@
 package com.zerokikr.forestdb.controller;
 
+import com.zerokikr.forestdb.entity.Risk;
 import com.zerokikr.forestdb.entity.Subject;
+import com.zerokikr.forestdb.service.RiskService;
 import com.zerokikr.forestdb.service.SubjectService;
-import com.zerokikr.forestdb.utility.SubjectExcelExporter;
+import com.zerokikr.forestdb.utility.SubjectBarChartExcelExporter;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,6 +17,7 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -24,12 +27,16 @@ public class SubjectController {
 
     private SubjectService subjectService;
 
-    public SubjectController(SubjectService subjectService) {
+    private RiskService riskService;
+
+    public SubjectController(SubjectService subjectService, RiskService riskService) {
         this.subjectService = subjectService;
+        this.riskService = riskService;
     }
 
+
     @InitBinder
-    public void initBinder (WebDataBinder dataBinder) {
+    public void initBinder(WebDataBinder dataBinder) {
         StringTrimmerEditor stringTrimmerEditor = new StringTrimmerEditor(true);
         dataBinder.registerCustomEditor(String.class, stringTrimmerEditor);
     }
@@ -42,7 +49,7 @@ public class SubjectController {
     }
 
     @GetMapping("/add")
-    public String showAddForm (Model theModel) {
+    public String showAddForm(Model theModel) {
         Subject subject = new Subject();
         theModel.addAttribute("subject", subject);
         return "subjects/addSubject";
@@ -70,23 +77,31 @@ public class SubjectController {
         return "redirect:/subjects";
     }
 
+    @GetMapping("/reports")
+    public String showAllReportsBySubjectId (Model theModel, @RequestParam ("subjectId") long subjectId) {
+
+        Subject subject = subjectService.getSubjectById(subjectId);
+
+        theModel.addAttribute("subject", subject);
+
+        return "reports/subjectReports";
+    }
+
     @GetMapping("/export")
-    public void exportToExcel(HttpServletResponse response) throws IOException {
+    public void exportToExcel(HttpServletResponse response, @RequestParam("subjectId") Long subjectId) throws IOException {
         response.setContentType("application/octet-stream");
         DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
         String currentDateTime = dateFormatter.format(new Date());
-
         String headerKey = "Content-Disposition";
-        String headerValue = "attachment; filename=users_" + currentDateTime + ".xlsx";
+        String headerValue = "attachment; filename=subject_bar_chart_" + currentDateTime + ".xlsx";
         response.setHeader(headerKey, headerValue);
 
-        List<Subject> subjects = subjectService.getAllSubjects();
+        Subject subject = subjectService.getSubjectById(subjectId);
+        List<Risk> risks = riskService.getAllRisksBySubjectId(subjectId);
 
-        SubjectExcelExporter excelExporter = new SubjectExcelExporter(subjects);
+        SubjectBarChartExcelExporter subjectBarChartExcelExporter = new SubjectBarChartExcelExporter(subject, risks);
+        subjectBarChartExcelExporter.export(response);
 
-        excelExporter.export(response);
     }
-
-
 
 }

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <title>Регистрация пользователя</title>
+</head>
+
+<body>
+
+<div class="container">
+    <h3>Регистрация пользователя</h3>
+    <hr>
+
+    <p class="h4 mb-4">Введите данные нового пользователя: </p>
+
+    <form action="#" th:action="@{/users/save}"
+          th:object="${user}" method="POST">
+
+        <input type="hidden" th:field="*{id}"/>
+
+        <input type="text" th:field="*{email}"
+               class="form-control mb-4 col-4" placeholder="адрес электронной почты">
+
+        <p th:if="${#fields.hasErrors('email')}" th:errorclass="error" th:errors="*{email}"
+           class="alert alert-danger" role="alert"/>
+
+        <p th:if="${#fields.hasGlobalErrors()}" th:each="emailError : ${#fields.errors('global')}" th:text="${emailError}" class="error" />
+
+        <input type="text" th:field="*{firstName}"
+               class="form-control mb-4 col-4" placeholder="имя">
+
+        <p th:if="${#fields.hasErrors('firstName')}" th:errorclass="error" th:errors="*{firstName}"
+           class="alert alert-danger" role="alert"/>
+
+        <input type="text" th:field="*{lastName}"
+               class="form-control mb-4 col-4" placeholder="фамилия">
+
+        <p th:if="${#fields.hasErrors('lastName')}" th:errorclass="error" th:errors="*{lastName}"
+           class="alert alert-danger" role="alert"/>
+
+        <input type="text" th:field="*{password}"
+               class="form-control mb-4 col-4" placeholder="пароль">
+
+        <p th:if="${#fields.hasErrors('password')}" th:errorclass="error" th:errors="*{password}"
+           class="alert alert-danger" role="alert"/>
+
+        <input type="text" th:field="*{confirmedPassword}"
+               class="form-control mb-4 col-4" placeholder="подтвердите пароль">
+
+        <p th:if="${#fields.hasErrors('confirmedPassword')}" th:errorclass="error" th:errors="*{confirmedPassword}"
+           class="alert alert-danger" role="alert"/>
+
+        <p th:if="${#fields.hasGlobalErrors()}" th:each="passwordError : ${#fields.errors('global')}" th:text="${passwordError}" class="alert alert-danger" role="alert" />
+
+        <button type="submit" class="btn btn-success col-2">Зарегистрироваться</button>
+
+    </form>
+    <hr>
+    <a th:href="@{/login}"
+       class="btn btn-outline-primary btn-sm mb-3">Назад к странице входа в систему</a>
+</div>
+
+</body>
+
+</html>

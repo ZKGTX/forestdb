@@ -9,4 +9,6 @@ import java.util.List;
 public interface ReportingYearRepository extends PagingAndSortingRepository<ReportingYear, Long>, JpaSpecificationExecutor<ReportingYear> {
 
     List<ReportingYear> findByActionIdOrderByYearAsc(Long id);
+
+    ReportingYear findByYear(Integer year);
 }

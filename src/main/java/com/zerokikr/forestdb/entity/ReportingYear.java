@@ -53,7 +53,6 @@ public class ReportingYear {
 
     @Column(name = "cost_measuring_units")
     @NotNull(message = "необходимо указать единицу измерения стоимости")
-    @Pattern(regexp="[а-яёА-ЯЁ ,.()-]+", message = "только русские буквы")
     private String costMeasuringUnits;
 
     @Column(name = "commentary")

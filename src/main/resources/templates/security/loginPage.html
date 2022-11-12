@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Вход в систему</title>
+
+    <link type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" />
+
+</head>
+<body>
+<div class="container">
+    <h1>Добро пожаловать в RusForestDB! Войдите или зарегистрируйтесь</h1>
+
+    <div th:if="${param.error}" class="alert alert-danger">Неправильный адрес почты и/или пароль.</div>
+    <div th:if="${param.logout}" class="alert alert-success">Вы вышли из системы.</div>
+    <div class="alert alert-success" role="alert" th:text="${success}" th:if="${success}"></div>
+
+    <form th:action="@{/doLogin}" method="post" class="form-horizontal">
+        <div class="form-group">
+            <label class="control-label col-xs-2" for="username"> Электронная почта: </label>
+            <div class="col-xs-10">
+                <input id="username" type="text" name="username" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-xs-2" for="password"> Пароль: </label>
+            <div class="col-xs-10">
+                <input id="password" type="password" name="password" />
+            </div>
+        </div>
+        <div class="form-actions col-xs-offset-2 col-xs-10">
+            <input type="submit" class="btn btn-success" value="Вход" />
+            <a class="btn btn-primary" th:href="@{/signup}">Регистрация</a>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>

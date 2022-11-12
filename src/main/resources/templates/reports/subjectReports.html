@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <title>Отчеты по выбранному субъекту РФ</title>
+</head>
+<body>
+<div class="container">
+    <h1>
+        <a th:href="@{/doLogout}" class="btn btn-outline-secondary btn-sm mb-3 pull-right"
+           onclick="if (!(confirm('Вы действительно хотите завершить работу и выйти из системы?))) return false"> Выйти из системы </a>
+    </h1>
+    <h3> <span th:text="${subject.name}"></span></h3>
+    <a th:href="@{/subjects}" class="btn btn-outline-primary btn-sm mb-3">Назад к списку субъектов РФ</a>
+    <hr>
+    <h3>Отчеты:</h3>
+    <hr>
+
+    <table class="table table-striped">
+        <thead class="thead-light">
+        <tr>
+            <th scope="col">Тип отчета</th>
+            <th scope="col">Действие</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+
+            <td>общий % выполнения мероприятий по климатическим рискам</td>
+            <td><a th:href="@{/subjects/export(subjectId = ${subject.id})}"
+                   class="btn btn-success btn-sm">
+                ↓ загрузить
+            </a></td>
+        </tr>
+        <tr>
+
+            <td>список климатических рисков и отчеты по ним</td>
+            <td><a th:href="@{/risks/(subjectId = ${subject.id})}"
+                   class="btn btn-info btn-sm">
+                → перейти
+            </a></td>
+        </tr>
+        <tr>
+
+            <td>Larry</td>
+            <td>the Bird</td>
+        </tr>
+        </tbody>
+    </table>
+    <a th:href="@{/subjects}">Назад к списку субъектов РФ</a>
+</div>
+</body>
+</html>

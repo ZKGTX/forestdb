@@ -1,10 +1,13 @@
 package com.zerokikr.forestdb.controller;
 
+import com.zerokikr.forestdb.entity.Measure;
 import com.zerokikr.forestdb.entity.Risk;
 import com.zerokikr.forestdb.entity.Subject;
+import com.zerokikr.forestdb.service.MeasureService;
+import com.zerokikr.forestdb.service.ReportingYearService;
 import com.zerokikr.forestdb.service.RiskService;
 import com.zerokikr.forestdb.service.SubjectService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.zerokikr.forestdb.utility.RiskPieChartExcelExporter;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,7 +17,12 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -24,9 +32,13 @@ public class RiskController {
 
     private SubjectService subjectService;
 
-    public RiskController(RiskService riskService, SubjectService subjectService) {
+    private MeasureService measureService;
+
+
+    public RiskController(RiskService riskService, SubjectService subjectService, MeasureService measureService) {
         this.riskService = riskService;
         this.subjectService = subjectService;
+        this.measureService = measureService;
     }
 
     @InitBinder
@@ -76,5 +88,32 @@ public class RiskController {
         theModel.addAttribute("subjectId", risk.getSubject().getId());
         return new ModelAndView("redirect:/risks", theModel);
     }
+
+    @GetMapping("/risks/reports")
+    public String showAllReportsByRiskId(Model theModel, @RequestParam("riskId") Long riskId) {
+        Risk risk = riskService.getRiskById(riskId);
+        theModel.addAttribute("risk", risk);
+        return "reports/riskReports";
+    }
+
+    @GetMapping("risks/export")
+    public void exportToExcel (HttpServletResponse response, @RequestParam ("riskId") Long riskId) throws IOException {
+        response.setContentType("application/octet-stream");
+        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+        String currentDateTime = dateFormatter.format(new Date());
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=pie_chart_" + currentDateTime + ".xlsx";
+        response.setHeader(headerKey, headerValue);
+
+        Risk risk = riskService.getRiskById(riskId);
+        List<Measure> measures = measureService.getAllMeasuresByRiskId(riskId);
+        RiskPieChartExcelExporter riskPieChartExcelExporter = new RiskPieChartExcelExporter(risk, measures);
+        riskPieChartExcelExporter.export(response);
+
+
+
+    }
+
+
 
 }

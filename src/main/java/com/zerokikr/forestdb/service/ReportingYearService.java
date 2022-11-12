@@ -33,6 +33,11 @@ public class ReportingYearService {
         return reportingYearRepository.findById(id).orElseThrow(() -> new ReportingYearNotFoundException(id));
     }
 
+    public ReportingYear getReportingYearByYear (Integer year) {
+        return reportingYearRepository.findByYear(year);
+    }
+
+
     public void saveReportingYear (ReportingYear reportingYear) {
         reportingYearRepository.save(reportingYear);
     }
@@ -41,13 +46,7 @@ public class ReportingYearService {
         reportingYearRepository.deleteById(id);
     }
 
-    public String convertCommasToDots (String s) {
-        return s.replace(',','.');
-    }
 
-    public String removeStars (String s) {
-        return s.replaceAll("[*]+", "");
-    }
 
 
 }

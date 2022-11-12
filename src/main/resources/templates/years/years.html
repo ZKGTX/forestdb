@@ -8,10 +8,14 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
-    <title>Отчетные годы</title>
+    <title>Ежегодные отчеты: </title>
 </head>
 <body>
 <div class="container">
+    <h1>
+        <a th:href="@{/doLogout}" class="btn btn-outline-secondary btn-sm mb-3 pull-right"
+           onclick="if (!(confirm('Вы действительно хотите завершить работу и выйти из системы?))) return false"> Выйти из системы </a>
+    </h1>
     <h3> <span th:text="${action.measure.risk.subject.name}"></span></h3>
     <hr>
     <h3> <span th:text="${action.measure.risk.name}"></span></h3>
@@ -20,19 +24,19 @@
     <hr>
     <h3> <span th:text="${action.name}"></span></h3>
     <hr>
-    <h3>Отчетные годы</h3>
+    <h3>Ежегодные отчеты: </h3>
     <hr>
 
     <a th:href="@{/years/add(actionId=${action.id})}"
-       class="btn btn-success btn-sm mb-3">
-        Добавить отчетный год
+       class="btn btn-success btn-lg mb-3">
+        + добавить ежегодный отчет по мероприятию
     </a>
 
-    <a th:href="@{/actions(measureId=${action.measure.id})}" class="btn btn-outline-primary btn-sm mb-3">Назад к списку мероприятий</a>
-    <a th:href="@{/subjects}" class="btn btn-outline-secondary btn-sm mb-3">Назад к списку субъектов РФ</a>
+    <a th:href="@{/actions(measureId=${action.measure.id})}" class="btn btn-outline-primary btn-sm mb-3"> ← назад к списку мероприятий</a>
+    <a th:href="@{/subjects}" class="btn btn-outline-secondary btn-sm mb-3"> ↑ назад к списку субъектов РФ</a>
 
     <table class="table table-hover table-bordered table-striped">
-        <thead class="thead-dark">
+        <thead class="thead-light">
         <tr>
             <th>Год</th>
             <th>Объем работ (по плану)</th>
@@ -66,13 +70,13 @@
             <td>
                 <a th:href="@{/years/update(reportingYearId=${tempReportingYear.id})}"
                    class="btn btn-outline-secondary btn-sm">
-                    Изменить
+                    изменить отчет
                 </a>
 
                 <a th:href="@{/years/delete(reportingYearId=${tempReportingYear.id}, actionId=${tempReportingYear.action.id})}"
                    class="btn btn-outline-danger btn-sm"
                    onclick="if (!(confirm('Вы действительно хотите удалить этот отчетный год?'))) return false">
-                    Удалить
+                    удалить отчет
                 </a>
 
             </td>>

@@ -8,16 +8,16 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
-    <title>Добавить мероприятие</title>
+    <title>Добавить ежегодный отчет</title>
 </head>
 
 <body>
 
 <div class="container">
-    <h3>Добавить отчетный год</h3>
+    <h3>Добавить ежегодный отчет</h3>
     <hr>
 
-    <p class="h4 mb-4">Добавление отчетного года</p>
+    <p class="h4 mb-4">Введите данные:</p>
 
     <form action="#" th:action="@{/years/save}"
           th:object="${reportingYear}" method="POST">
@@ -48,7 +48,7 @@
            class="alert alert-danger" role="alert"/>
 
         <input type="text" th:field="*{workMeasuringUnits}"
-               class="form-control mb-4 col-4" placeholder="ед. изм. работ">
+               class="form-control mb-4 col-4" placeholder="единица измерения работ">
 
         <p th:if="${#fields.hasErrors('workMeasuringUnits')}" th:errorclass="error" th:errors="*{workMeasuringUnits}"
            class="alert alert-danger" role="alert"/>
@@ -62,11 +62,15 @@
         <input type="text" th:field="*{actualWorkCost}"
                class="form-control mb-4 col-4" placeholder="фактическая стоимость работ">
 
+
+        <select class="form-control mb-4 col-4" placeholder="единица измерения стоимости" name="costMeasuringUnits" th:field="*{costMeasuringUnits}">
+            <option th:each="costMeasuringUnits : ${T(com.zerokikr.forestdb.enumeration.Unit).values()}"
+                    th:value="${costMeasuringUnits.getValue()}" th:text="${costMeasuringUnits.getValue()}"></option>
+        </select>
+
         <p th:if="${#fields.hasErrors('actualWorkCost')}" th:errorclass="error" th:errors="*{actualWorkCost}"
            class="alert alert-danger" role="alert"/>
 
-        <input type="text" th:field="*{costMeasuringUnits}"
-               class="form-control mb-4 col-4" placeholder="ед. изм. стоимости">
 
         <p th:if="${#fields.hasErrors('costMeasuringUnits')}" th:errorclass="error" th:errors="*{costMeasuringUnits}"
            class="alert alert-danger" role="alert"/>
