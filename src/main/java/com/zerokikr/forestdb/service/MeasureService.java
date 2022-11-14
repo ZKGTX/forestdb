@@ -1,8 +1,11 @@
 package com.zerokikr.forestdb.service;
 
 import com.zerokikr.forestdb.entity.Measure;
+import com.zerokikr.forestdb.entity.Risk;
 import com.zerokikr.forestdb.exception.MeasureNotFoundException;
 import com.zerokikr.forestdb.repository.MeasureRepository;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +21,10 @@ public class MeasureService {
 
     public List<Measure> getAllMeasuresByRiskId (Long riskId) {
         return measureRepository.findByRiskIdOrderByNameAsc(riskId);
+    }
+
+    public List<Measure> getMeasuresByRiskIdAndKeyword (Specification<Measure> specs) {
+        return measureRepository.findAll(specs, Sort.by(Sort.Direction.ASC, "name"));
     }
 
     public Measure getMeasureById(Long id) {

@@ -36,7 +36,7 @@ public class RiskPieChartExcelExporter {
             font.setFontHeight(14);
             style.setFont(font);
             createCell(row, 0, "Мероприятие", style);
-            createCell(row, 1, "Стоимость", style);
+            createCell(row, 1, "Стоимость, руб.", style);
     }
 
     private void createCell(Row row, int columnCount, Object value, CellStyle style) {
@@ -70,7 +70,7 @@ public class RiskPieChartExcelExporter {
         XSSFDrawing drawing = sheet.createDrawingPatriarch();
         XSSFClientAnchor anchor = drawing.createAnchor(0, 0, 0,0, 0, range+1, 8, range+20);
         XSSFChart chart = drawing.createChart(anchor);
-        chart.setTitleText(risk.getName() + " : сравнительная стоимость мероприятий");
+        chart.setTitleText(risk.getSubject().getName() + "\n" + risk.getName() + " : сравнительная стоимость мероприятий");
         chart.setTitleOverlay(false);
         XDDFChartLegend legend = chart.getOrAddLegend();
         legend.setPosition(LegendPosition.BOTTOM);

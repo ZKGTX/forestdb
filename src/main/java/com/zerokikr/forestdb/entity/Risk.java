@@ -17,7 +17,7 @@ public class Risk {
 
     @Column(name = "name")
     @NotNull(message = "название климатического риска не может быть пустым")
-    @Pattern(regexp="[а-яёА-ЯЁ ,.()-]+", message = "название климатического риска должно состоять только из русских букв")
+    @Pattern(regexp="[а-яёА-ЯЁ0-9 ,.()-]+", message = "название климатического риска должно состоять только из русских букв")
     private String name;
 
     @ManyToOne

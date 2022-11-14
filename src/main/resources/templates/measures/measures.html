@@ -16,12 +16,25 @@
         <a th:href="@{/doLogout}" class="btn btn-outline-secondary btn-sm mb-3 pull-right"
            onclick="if (!(confirm('Вы действительно хотите завершить работу и выйти из системы?))) return false"> Выйти из системы </a>
     </h1>
-    <h3> <span th:text="${risk.subject.name}"></span></h3>
+    <h3 align="center"> <span th:text="${risk.subject.name}"></span></h3>
     <hr>
-    <h3> <span th:text="${risk.name}"></span></h3>
+    <h3 align="center"> <span th:text="${risk.name}"></span></h3>
     <hr>
-    <h3>Адаптационные меры</h3>
+    <h3 align="center">Адаптационные меры:</h3>
     <hr>
+    <form th:action="@{/measures(riskId=${risk.id})}" method="get" class="form-horizontal mb-4 col-4">
+
+        <div class="input-group">
+            <input th:value="${keyword != null} ? ${keyword}" name="keyword" placeholder="название риска" class="form-control" />
+            <input type="hidden" th:value="${risk.id}" name="riskId" placeholder="id субъекта" class="form-control" />
+        </div>
+
+        <div style="margin-top: 10px" class="form-group">
+            <div class="col-sm-6 controls">
+                <button type="submit" class="btn btn-primary">поиск</button>
+            </div>
+        </div>
+    </form>
 
     <a th:href="@{/measures/add(riskId=${risk.id})}"
        class="btn btn-success btn-lg mb-3">

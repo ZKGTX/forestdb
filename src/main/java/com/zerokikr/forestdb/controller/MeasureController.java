@@ -2,10 +2,14 @@ package com.zerokikr.forestdb.controller;
 
 import com.zerokikr.forestdb.entity.Measure;
 import com.zerokikr.forestdb.entity.Risk;
+import com.zerokikr.forestdb.entity.Subject;
+import com.zerokikr.forestdb.repository.specification.MeasureSpecs;
+import com.zerokikr.forestdb.repository.specification.RiskSpecs;
 import com.zerokikr.forestdb.service.MeasureService;
 import com.zerokikr.forestdb.service.RiskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -36,11 +40,17 @@ public class MeasureController {
     }
 
     @GetMapping("/measures")
-    public String showAllMeasuresByRiskId(Model theModel, @RequestParam("riskId") Long riskId) {
-        List<Measure> allMeasures = measureService.getAllMeasuresByRiskId(riskId);
+    public String showAllMeasuresByRiskId(Model theModel, @RequestParam("riskId") Long riskId, @RequestParam(value = "keyword", required = false) String keyword) {
+        Specification<Measure> spec = Specification.where(MeasureSpecs.riskIdEqualsTo(riskId));
         Risk risk = riskService.getRiskById(riskId);
+        if (keyword != null) {
+            spec = spec.and(MeasureSpecs.nameContains(keyword));
+        }
+
+        List<Measure> allMeasures = measureService.getMeasuresByRiskIdAndKeyword(spec);
         theModel.addAttribute("allMeasures", allMeasures);
         theModel.addAttribute("risk", risk);
+        theModel.addAttribute("keyword", keyword);
         return "measures/measures";
     }
 

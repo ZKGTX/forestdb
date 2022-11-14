@@ -3,6 +3,8 @@ package com.zerokikr.forestdb.service;
 import com.zerokikr.forestdb.entity.Risk;
 import com.zerokikr.forestdb.exception.RiskNotFoundException;
 import com.zerokikr.forestdb.repository.RiskRepository;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +20,10 @@ public class RiskService {
 
     public List<Risk> getAllRisksBySubjectId (Long subjectId) {
         return riskRepository.findBySubjectIdOrderByNameAsc(subjectId);
+    }
+
+    public List<Risk> getRisksBySubjectIdAndKeyword (Specification<Risk> specs) {
+        return riskRepository.findAll(specs, Sort.by(Sort.Direction.ASC, "name"));
     }
 
     public Risk getRiskById(Long id) {

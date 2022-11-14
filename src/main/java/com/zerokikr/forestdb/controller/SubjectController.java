@@ -2,10 +2,12 @@ package com.zerokikr.forestdb.controller;
 
 import com.zerokikr.forestdb.entity.Risk;
 import com.zerokikr.forestdb.entity.Subject;
+import com.zerokikr.forestdb.repository.specification.SubjectSpecs;
 import com.zerokikr.forestdb.service.RiskService;
 import com.zerokikr.forestdb.service.SubjectService;
 import com.zerokikr.forestdb.utility.SubjectBarChartExcelExporter;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -42,9 +44,14 @@ public class SubjectController {
     }
 
     @GetMapping()
-    public String showAllSubjects(Model theModel) {
-        List<Subject> allSubjects = (List<Subject>) subjectService.getAllSubjects();
+    public String showAllSubjects(Model theModel, @RequestParam(value = "keyword", required = false) String keyword) {
+        Specification<Subject> spec = Specification.where(null);
+        if (keyword != null) {
+            spec = spec.and(SubjectSpecs.nameContains(keyword));
+        }
+        List<Subject> allSubjects = subjectService.getSubjectsByKeyword(spec);
         theModel.addAttribute("allSubjects", allSubjects);
+        theModel.addAttribute("keyword", keyword);
         return "subjects/subjects";
     }
 
@@ -86,6 +93,7 @@ public class SubjectController {
 
         return "reports/subjectReports";
     }
+
 
     @GetMapping("/export")
     public void exportToExcel(HttpServletResponse response, @RequestParam("subjectId") Long subjectId) throws IOException {

@@ -49,7 +49,11 @@ public class SubjectBarChartExcelExporter {
         Cell cell = row.createCell(columnCount);
         if (value instanceof Double) {
             cell.setCellValue((Double) value);
-        } else {
+        }
+        else if (value instanceof Integer) {
+            cell.setCellValue((Integer) value);
+        }
+        else {
             cell.setCellValue((String) value);
         }
         cell.setCellStyle(style);
@@ -66,6 +70,7 @@ public class SubjectBarChartExcelExporter {
             int columnCount = 0;
             createCell(row, columnCount++, risk.getName(), style);
             createCell(row, columnCount++, totalCompletionRate(risk, year), style);
+            createCell(row, columnCount++, totalNumberOfActions(risk, year), style);
         }
     }
 
@@ -126,6 +131,20 @@ public class SubjectBarChartExcelExporter {
         BigDecimal totalCompletionRate = numerator.divide(denominator, RoundingMode.HALF_UP);
         BigDecimal hundredPercent = new BigDecimal("100");
         return totalCompletionRate.compareTo(hundredPercent) >= 0 ? hundredPercent.doubleValue() : totalCompletionRate.doubleValue();
+    }
+
+    public int totalNumberOfActions(Risk risk, Integer year) {
+        List<Action> actions = getActions(risk.getMeasures());
+        int result = 0;
+        for (Action action : actions) {
+            List<ReportingYear> reportingYears = action.getReportingYears();
+            for (ReportingYear reportingYear : reportingYears) {
+                if (Objects.equals(reportingYear.getYear(), year)) {
+                    result++;
+                }
+            }
+        }
+        return result;
     }
 
     public BigDecimal calculateNumeratorPart(Action action, Integer year) {

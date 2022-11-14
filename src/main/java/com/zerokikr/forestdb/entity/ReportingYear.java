@@ -1,9 +1,10 @@
 package com.zerokikr.forestdb.entity;
 
 
+import net.bytebuddy.implementation.bind.annotation.Default;
+
 import javax.persistence.*;
 import javax.validation.constraints.*;
-import java.math.BigDecimal;
 import java.util.Objects;
 
 @Entity
@@ -24,6 +25,12 @@ public class ReportingYear {
     @ManyToOne
     @JoinColumn(name = "action_id")
     private Action action;
+
+    @Column(name = "true_work_plan")
+    private String trueWorkPlan;
+
+    @Column(name = "true_cost_plan")
+    private String trueCostPlan;
 
     @Column(name = "planned_work_amount")
     @NotNull(message = "необходимо указать запланированный объем работ")
@@ -92,6 +99,22 @@ public class ReportingYear {
 
     public void setAction(Action action) {
         this.action = action;
+    }
+
+    public String getTrueWorkPlan() {
+        return trueWorkPlan;
+    }
+
+    public void setTrueWorkPlan(String trueWorkPlan) {
+        this.trueWorkPlan = trueWorkPlan;
+    }
+
+    public String getTrueCostPlan() {
+        return trueCostPlan;
+    }
+
+    public void setTrueCostPlan(String trueCostPlan) {
+        this.trueCostPlan = trueCostPlan;
     }
 
     public String getPlannedWorkAmount() {
