@@ -7,6 +7,8 @@ import com.zerokikr.forestdb.exception.ReportingYearNotFoundException;
 import com.zerokikr.forestdb.exception.RiskNotFoundException;
 import com.zerokikr.forestdb.repository.ActionRepository;
 import com.zerokikr.forestdb.repository.ReportingYearRepository;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -27,6 +29,10 @@ public class ReportingYearService {
 
     public List<ReportingYear> getAllReportingYearsByActionId (Long actionId) {
         return reportingYearRepository.findByActionIdOrderByYearAsc(actionId);
+    }
+
+    public List<ReportingYear> getAllReportingYearsByActionIdAndKeyword (Specification<ReportingYear> specs) {
+        return reportingYearRepository.findAll(specs, Sort.by(Sort.Direction.ASC, "year"));
     }
 
     public ReportingYear getReportingYearById(Long id) {

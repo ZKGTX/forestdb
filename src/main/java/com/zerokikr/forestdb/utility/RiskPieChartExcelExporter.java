@@ -68,12 +68,12 @@ public class RiskPieChartExcelExporter {
     private void createPieChart () {
         int range = getActions(measures).size();
         XSSFDrawing drawing = sheet.createDrawingPatriarch();
-        XSSFClientAnchor anchor = drawing.createAnchor(0, 0, 0,0, 0, range+1, 8, range+20);
+        XSSFClientAnchor anchor = drawing.createAnchor(0, 0, 0,0, 0, range+1, 7, range+25);
         XSSFChart chart = drawing.createChart(anchor);
         chart.setTitleText(risk.getSubject().getName() + "\n" + risk.getName() + " : сравнительная стоимость мероприятий");
         chart.setTitleOverlay(false);
         XDDFChartLegend legend = chart.getOrAddLegend();
-        legend.setPosition(LegendPosition.BOTTOM);
+        legend.setPosition(LegendPosition.RIGHT);
         XDDFDataSource<String> names = XDDFDataSourcesFactory.fromStringCellRange(sheet, new CellRangeAddress(1, range,0, 0));
         XDDFNumericalDataSource<Double> values = XDDFDataSourcesFactory.fromNumericCellRange(sheet, new CellRangeAddress(1, range, 1,1));
         XDDFChartData data = chart.createData(ChartTypes.PIE3D, null, null);

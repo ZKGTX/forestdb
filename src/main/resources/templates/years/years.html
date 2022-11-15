@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -12,23 +12,40 @@
 </head>
 <body>
 <div class="container">
-    <h1>
+    <h6 align="right">
+        <div sec:authorize="isAuthenticated()">
+            <div sec:authentication="principal.lastName"></div>
+            <div sec:authentication="principal.firstName"></div>
+        </div>
         <a th:href="@{/doLogout}" class="btn btn-outline-secondary btn-sm mb-3 pull-right"
-           onclick="if (!(confirm('Вы действительно хотите завершить работу и выйти из системы?))) return false"> Выйти из системы </a>
-    </h1>
-    <h3> <span th:text="${action.measure.risk.subject.name}"></span></h3>
+           onclick="if (!(confirm('Вы действительно хотите завершить работу и выйти из системы?'))) return false"> Выйти из системы </a>
+    </h6>
+    <h5 align="center"> <span th:text="${action.measure.risk.subject.name}"></span></h5>
     <hr>
-    <h3> <span th:text="${action.measure.risk.name}"></span></h3>
+    <h5 align="center"> <span th:text="${action.measure.risk.name}"></span></h5>
     <hr>
-    <h3> <span th:text="${action.measure.name}"></span></h3>
+    <h5 align="center"> <span th:text="${action.measure.name}"></span></h5>
     <hr>
-    <h3> <span th:text="${action.name}"></span></h3>
+    <h5 align="center"> <span th:text="${action.name}"></span></h5>
     <hr>
-    <h3>Ежегодные отчеты: </h3>
+    <h5 align="center">Ежегодные отчеты: </h5>
     <hr>
+    <form th:action="@{/years(actionId=${action.id})}" method="get" class="form-horizontal">
+
+        <div class="input-group">
+            <input th:value="${year != null} ? ${year}" name="year" placeholder="год" class="form-control" />
+            <input type="hidden" th:value="${action.id}" name="actionId" placeholder="id мероприятия" class="form-control" />
+        </div>
+
+        <div style="margin-top: 10px" class="form-group">
+            <div class="col-sm-6 controls">
+                <button type="submit" class="btn btn-primary">поиск</button>
+            </div>
+        </div>
+    </form>
 
     <a th:href="@{/years/add(actionId=${action.id})}"
-       class="btn btn-success btn-lg mb-3">
+       class="btn btn-success mb-3">
         + добавить ежегодный отчет по мероприятию
     </a>
 
@@ -39,9 +56,11 @@
         <thead class="thead-light">
         <tr>
             <th>Год</th>
+            <th sec:authorize="hasAuthority('admin')">ИСТИННЫЙ ПЛАН РАБОТ</th>
             <th>Объем работ (по плану)</th>
             <th>Объем работ (фактический)</th>
             <th>Ед.изм. работ</th>
+            <th sec:authorize="hasAuthority('admin')">ИСТИННЫЙ ПЛАН СТОИМОСТИ</th>
             <th>Стоимость работ (по плану)</th>
             <th>Стоимость работ (фактическая)</th>
             <th>Ед.изм. стоимости</th>
@@ -53,11 +72,15 @@
         <tr th:each="tempReportingYear : ${allReportingYears}">
             <td th:text="${tempReportingYear.year}"/>
 
+            <td sec:authorize="hasAuthority('admin')" th:text="${tempReportingYear.trueWorkPlan}"/>
+
             <td th:text="${tempReportingYear.plannedWorkAmount}"/>
 
             <td th:text="${tempReportingYear.actualWorkAmount}"/>
 
             <td th:text="${tempReportingYear.workMeasuringUnits}"/>
+
+            <td sec:authorize="hasAuthority('admin')" th:text="${tempReportingYear.trueCostPlan}"/>
 
             <td th:text="${tempReportingYear.plannedWorkCost}"/>
 

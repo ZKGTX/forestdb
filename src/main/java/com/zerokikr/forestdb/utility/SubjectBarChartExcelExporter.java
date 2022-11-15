@@ -78,7 +78,7 @@ public class SubjectBarChartExcelExporter {
         int range = subject.getRisks().size();
 
         XSSFDrawing drawing = sheet.createDrawingPatriarch();
-        XSSFClientAnchor anchor = drawing.createAnchor(0, 0, 0,0, 0, range+1, 8, range+20);
+        XSSFClientAnchor anchor = drawing.createAnchor(0, 0, 0,0, 0, range+1, 7, range+25);
         XSSFChart chart = drawing.createChart(anchor);
         chart.setTitleText(subject.getName() + " : процент выполнения мероприятий");
         chart.setTitleOverlay(false);
@@ -147,7 +147,7 @@ public class SubjectBarChartExcelExporter {
         return result;
     }
 
-    public BigDecimal calculateNumeratorPart(Action action, Integer year) {
+    public BigDecimal calculateNumeratorPart(Action action, Integer year) throws ArithmeticException, NumberFormatException {
         List <ReportingYear> reportingYears = action.getReportingYears();
         for (ReportingYear reportingYear : reportingYears) {
             if (Objects.equals(reportingYear.getYear(), year)) {

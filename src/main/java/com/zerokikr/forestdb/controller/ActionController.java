@@ -3,9 +3,11 @@ package com.zerokikr.forestdb.controller;
 
 import com.zerokikr.forestdb.entity.Action;
 import com.zerokikr.forestdb.entity.Measure;
+import com.zerokikr.forestdb.repository.specification.ActionSpecs;
 import com.zerokikr.forestdb.service.ActionService;
 import com.zerokikr.forestdb.service.MeasureService;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -36,9 +38,14 @@ public class ActionController {
     }
 
     @GetMapping("/actions")
-    public String showAllActionsByMeasureId(Model theModel, @RequestParam("measureId") Long measureId) {
-        List<Action> allActions = actionService.getAllActionsByMeasureId(measureId);
+    public String showAllActionsByMeasureId(Model theModel, @RequestParam("measureId") Long measureId, @RequestParam(value = "keyword", required = false) String keyword) {
+        Specification<Action> spec = Specification.where(ActionSpecs.measureIdEqualsTo(measureId));
         Measure measure = measureService.getMeasureById(measureId);
+        if (keyword != null) {
+            spec = spec.and(ActionSpecs.nameContains(keyword));
+        }
+        List<Action> allActions = actionService.getActionsByMeasureIdAndKeyword(spec);
+        theModel.addAttribute("keyword", keyword);
         theModel.addAttribute("allActions", allActions);
         theModel.addAttribute("measure", measure);
         return "actions/actions";

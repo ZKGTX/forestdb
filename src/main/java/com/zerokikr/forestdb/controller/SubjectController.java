@@ -13,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -96,7 +97,7 @@ public class SubjectController {
 
 
     @GetMapping("/export")
-    public void exportToExcel(HttpServletResponse response, @RequestParam("subjectId") Long subjectId) throws IOException {
+    public void exportToExcel(HttpServletResponse response, @RequestParam("subjectId") Long subjectId, RedirectAttributes redirectAttributes) throws IOException {
         response.setContentType("application/octet-stream");
         DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
         String currentDateTime = dateFormatter.format(new Date());
@@ -108,7 +109,11 @@ public class SubjectController {
         List<Risk> risks = riskService.getAllRisksBySubjectId(subjectId);
 
         SubjectBarChartExcelExporter subjectBarChartExcelExporter = new SubjectBarChartExcelExporter(subject, risks);
-        subjectBarChartExcelExporter.export(response);
+        try {
+            subjectBarChartExcelExporter.export(response);
+        } catch (ArithmeticException aE) {
+            redirectAttributes.addFlashAttribute()
+        }
 
     }
 

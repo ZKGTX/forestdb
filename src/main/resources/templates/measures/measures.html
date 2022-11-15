@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -12,21 +12,25 @@
 </head>
 <body>
 <div class="container">
-    <h1>
+    <h6 align="right">
+        <div sec:authorize="isAuthenticated()">
+            <div sec:authentication="principal.lastName"></div>
+            <div sec:authentication="principal.firstName"></div>
+        </div>
         <a th:href="@{/doLogout}" class="btn btn-outline-secondary btn-sm mb-3 pull-right"
-           onclick="if (!(confirm('Вы действительно хотите завершить работу и выйти из системы?))) return false"> Выйти из системы </a>
-    </h1>
-    <h3 align="center"> <span th:text="${risk.subject.name}"></span></h3>
+           onclick="if (!(confirm('Вы действительно хотите завершить работу и выйти из системы?'))) return false"> Выйти из системы </a>
+    </h6>
+    <h4 align="center"> <span th:text="${risk.subject.name}"></span></h4>
     <hr>
-    <h3 align="center"> <span th:text="${risk.name}"></span></h3>
+    <h4 align="center"> <span th:text="${risk.name}"></span></h4>
     <hr>
-    <h3 align="center">Адаптационные меры:</h3>
+    <h4 align="center">Адаптационные меры:</h4>
     <hr>
-    <form th:action="@{/measures(riskId=${risk.id})}" method="get" class="form-horizontal mb-4 col-4">
+    <form th:action="@{/measures(riskId=${risk.id})}" method="get" class="form-horizontal">
 
         <div class="input-group">
-            <input th:value="${keyword != null} ? ${keyword}" name="keyword" placeholder="название риска" class="form-control" />
-            <input type="hidden" th:value="${risk.id}" name="riskId" placeholder="id субъекта" class="form-control" />
+            <input th:value="${keyword != null} ? ${keyword}" name="keyword" placeholder="название адаптационной меры" class="form-control" />
+            <input type="hidden" th:value="${risk.id}" name="riskId" placeholder="id риска" class="form-control" />
         </div>
 
         <div style="margin-top: 10px" class="form-group">
@@ -37,7 +41,7 @@
     </form>
 
     <a th:href="@{/measures/add(riskId=${risk.id})}"
-       class="btn btn-success btn-lg mb-3">
+       class="btn btn-success mb-3">
         + добавить адаптационную меру
     </a>
 

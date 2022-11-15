@@ -3,9 +3,11 @@ package com.zerokikr.forestdb.controller;
 
 import com.zerokikr.forestdb.entity.Action;
 import com.zerokikr.forestdb.entity.ReportingYear;
+import com.zerokikr.forestdb.repository.specification.ReportingYearSpecs;
 import com.zerokikr.forestdb.service.ActionService;
 import com.zerokikr.forestdb.service.ReportingYearService;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -39,11 +41,19 @@ public class ReportingYearController {
     }
 
     @GetMapping("/years")
-    public String showAllYearsByActionId(Model theModel, @RequestParam("actionId") Long actionId) {
-        List<ReportingYear> allReportingYears = reportingYearService.getAllReportingYearsByActionId(actionId);
+    public String showAllYearsByActionId(Model theModel, @RequestParam("actionId") Long actionId, @RequestParam(value = "year", required = false) Integer year) {
+        Specification<ReportingYear> spec = Specification.where(ReportingYearSpecs.actionIdEqualsTo(actionId));
+        if (year != null) {
+            spec = spec.and(ReportingYearSpecs.yearEqualsTo(year));
+        }
+
         Action action = actionService.getActionById(actionId);
+
+        List<ReportingYear> allReportingYears = reportingYearService.getAllReportingYearsByActionIdAndKeyword(spec);
+
         theModel.addAttribute("allReportingYears", allReportingYears);
         theModel.addAttribute("action", action);
+        theModel.addAttribute("year", year);
         return "years/years";
     }
 
@@ -61,6 +71,8 @@ public class ReportingYearController {
         if (bindingResult.hasErrors()) {
             return new ModelAndView( "years/addYear");
         }
+        reportingYear.setTrueWorkPlan(reportingYear.getPlannedWorkAmount());
+        reportingYear.setTrueCostPlan(reportingYear.getPlannedWorkCost());
         reportingYearService.saveReportingYear(reportingYear);
         theModel.addAttribute("actionId", reportingYear.getAction().getId());
         return new ModelAndView("redirect:/years", theModel);

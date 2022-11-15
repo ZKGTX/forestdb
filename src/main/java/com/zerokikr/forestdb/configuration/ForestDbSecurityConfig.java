@@ -41,6 +41,7 @@ public class ForestDbSecurityConfig {
     public SecurityFilterChain filterChain (HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
+                .antMatchers("/users", "/subjects/reports", "/risks/reports").hasAuthority("admin")
                 .antMatchers("/signup", "/users/save").permitAll()
                 .anyRequest().authenticated()
 

@@ -3,6 +3,7 @@ package com.zerokikr.forestdb.service;
 import com.zerokikr.forestdb.entity.Role;
 import com.zerokikr.forestdb.entity.User;
 import com.zerokikr.forestdb.repository.UserRepository;
+import com.zerokikr.forestdb.security.CustomUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -31,14 +32,15 @@ public class FDbUserDetailsService implements UserDetailsService {
         if (user == null) {
             throw new UsernameNotFoundException(email);
         }
-
+        String firstName = user.getFirstName();
+        String lastName = user.getLastName();
         boolean enabled = true;
         boolean accountNonExpired = true;
         boolean credentialsNonExpired = true;
         boolean accountNonLocked = true;
 
-        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(),
-                enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, getAuthorities(user.getRoles()));
+        return new CustomUser(user.getEmail(), user.getPassword(),
+                enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, getAuthorities(user.getRoles()), firstName, lastName);
     }
 
     private static Collection<? extends GrantedAuthority> getAuthorities(List<Role> roles) {

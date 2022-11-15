@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -12,18 +12,22 @@
 </head>
 <body>
 <div class="container">
-    <h1>
+    <h6 align="right">
+        <div sec:authorize="isAuthenticated()">
+            <div sec:authentication="principal.lastName"></div>
+            <div sec:authentication="principal.firstName"></div>
+        </div>
         <a th:href="@{/doLogout}" class="btn btn-outline-secondary btn-sm mb-3 pull-right"
-           onclick="if (!(confirm('Вы действительно хотите завершить работу и выйти из системы?))) return false"> Выйти из системы </a>
-    </h1>
+           onclick="if (!(confirm('Вы действительно хотите завершить работу и выйти из системы?'))) return false"> Выйти из системы </a>
+    </h6>
     <h3 align="center"> <span th:text="${subject.name}"></span></h3>
     <hr>
     <h3 align="center">Риски, вызванные климатическими изменениями:</h3>
     <hr>
-    <form th:action="@{/risks(subjectId=${subject.id})}" method="get" class="form-horizontal mb-4 col-4">
+    <form th:action="@{/risks(subjectId=${subject.id})}" method="get" class="form-horizontal">
 
         <div class="input-group">
-            <input th:value="${keyword != null} ? ${keyword}" name="keyword" placeholder="название риска" class="form-control" />
+            <input th:value="${keyword != null} ? ${keyword}" name="keyword" placeholder="название климатического риска" class="form-control" />
             <input type="hidden" th:value="${subject.id}" name="subjectId" placeholder="id субъекта" class="form-control" />
         </div>
 
@@ -35,7 +39,7 @@
     </form>
 
         <a th:href="@{/risks/add(subjectId=${subject.id})}"
-       class="btn btn-success btn-lg mb-3">
+       class="btn btn-success mb-3">
         + добавить климатический риск
     </a>
 
@@ -58,7 +62,7 @@
                     → список адаптационных мер
                 </a>
 
-                <a th:href="@{/risks/reports(riskId=${tempRisk.id})}"
+                <a sec:authorize="hasAuthority('admin')" th:href="@{/risks/reports(riskId=${tempRisk.id})}"
                    class="btn btn-success btn-sm">
                     отчеты по риску
                 </a>
