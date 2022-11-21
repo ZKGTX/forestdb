@@ -33,12 +33,12 @@ public class ReportingYear {
     private String trueCostPlan;
 
     @Column(name = "planned_work_amount")
-    @NotNull(message = "необходимо указать запланированный объем работ")
+    @NotNull(message = "необходимо указать запланированный объем работ. допустимые символы: цифры (0-9), разделители (.) (,), примечания (*)")
     @Pattern(regexp="[0-9,.*]+", message = "допустимые символы: цифры (0-9), разделители (.) (,), примечания (*)")
     private String plannedWorkAmount;
 
     @Column(name = "actual_work_amount")
-    @NotNull(message = "необходимо указать выполненный объем работ")
+    @NotNull(message = "необходимо указать выполненный объем работ. допустимые символы: цифры (0-9), разделители (.) (,), примечания (*)")
     @Pattern(regexp="[0-9,.*]+", message = "допустимые символы: цифры (0-9), разделители (.) (,), примечания (*)")
     private String actualWorkAmount;
 
@@ -48,13 +48,13 @@ public class ReportingYear {
     private String workMeasuringUnits;
 
     @Column(name = "planned_work_cost")
-    @NotNull(message = "необходимо указать запланированную стоимость работ")
+    @NotNull(message = "необходимо указать запланированную стоимость работ. допустимые символы: цифры (0-9), разделители (.) (,), примечания (*)")
     @Pattern(regexp="[0-9,.*]+", message = "допустимые символы: цифры (0-9), разделители (.) (,), примечания (*)")
     private String plannedWorkCost;
 
 
     @Column(name = "actual_work_cost")
-    @NotNull(message = "необходимо указать фактическую стоимость работ")
+    @NotNull(message = "необходимо указать фактическую стоимость работ. допустимые символы: цифры (0-9), разделители (.) (,), примечания (*)")
     @Pattern(regexp="[0-9,.*]+", message = "допустимые символы: цифры (0-9), разделители (.) (,), примечания (*)")
     private String actualWorkCost;
 

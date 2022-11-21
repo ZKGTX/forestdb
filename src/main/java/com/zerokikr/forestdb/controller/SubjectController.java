@@ -5,6 +5,7 @@ import com.zerokikr.forestdb.entity.Subject;
 import com.zerokikr.forestdb.repository.specification.SubjectSpecs;
 import com.zerokikr.forestdb.service.RiskService;
 import com.zerokikr.forestdb.service.SubjectService;
+import com.zerokikr.forestdb.utility.PercentageSubjectExcelExporter;
 import com.zerokikr.forestdb.utility.SubjectBarChartExcelExporter;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.data.jpa.domain.Specification;
@@ -18,6 +19,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -101,20 +104,44 @@ public class SubjectController {
         response.setContentType("application/octet-stream");
         DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
         String currentDateTime = dateFormatter.format(new Date());
-        String headerKey = "Content-Disposition";
-        String headerValue = "attachment; filename=subject_bar_chart_" + currentDateTime + ".xlsx";
-        response.setHeader(headerKey, headerValue);
 
         Subject subject = subjectService.getSubjectById(subjectId);
         List<Risk> risks = riskService.getAllRisksBySubjectId(subjectId);
 
-        SubjectBarChartExcelExporter subjectBarChartExcelExporter = new SubjectBarChartExcelExporter(subject, risks);
-        try {
-            subjectBarChartExcelExporter.export(response);
-        } catch (ArithmeticException aE) {
-            redirectAttributes.addFlashAttribute()
-        }
+        String fileName = subject.getName() + "_общий_процент_выполнения_мероприятий_";
+        String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8);
+        String correctFileName = encodedFileName.replace('+', ' ');
 
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename="+ correctFileName + currentDateTime + ".xlsx";
+        response.setHeader(headerKey, headerValue);
+
+        SubjectBarChartExcelExporter subjectBarChartExcelExporter = new SubjectBarChartExcelExporter(subject, risks);
+
+        subjectBarChartExcelExporter.export(response);
+    }
+
+    @GetMapping("/exportPercents")
+    public void exportPercentsToExcel(HttpServletResponse response, @RequestParam("subjectId") Long subjectId, RedirectAttributes redirectAttributes) throws IOException {
+        response.setContentType("application/octet-stream");
+
+        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+        String currentDateTime = dateFormatter.format(new Date());
+
+        Subject subject = subjectService.getSubjectById(subjectId);
+        List<Risk> risks = riskService.getAllRisksBySubjectId(subjectId);
+
+        String fileName = subject.getName() + "_процент_выполнения_мероприятий_";
+        String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8);
+        String correctFileName = encodedFileName.replace('+', ' ');
+
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename="+ correctFileName + currentDateTime + ".xlsx";
+        response.setHeader(headerKey, headerValue);
+
+        PercentageSubjectExcelExporter percentageSubjectExcelExporter = new PercentageSubjectExcelExporter(subject, risks);
+
+        percentageSubjectExcelExporter.export(response);
     }
 
 }

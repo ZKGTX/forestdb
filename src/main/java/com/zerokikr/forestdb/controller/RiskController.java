@@ -23,6 +23,8 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -109,12 +111,17 @@ public class RiskController {
         response.setContentType("application/octet-stream");
         DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
         String currentDateTime = dateFormatter.format(new Date());
-        String headerKey = "Content-Disposition";
-        String headerValue = "attachment; filename=pie_chart_" + currentDateTime + ".xlsx";
-        response.setHeader(headerKey, headerValue);
 
         Risk risk = riskService.getRiskById(riskId);
         List<Measure> measures = measureService.getAllMeasuresByRiskId(riskId);
+
+        String fileName = risk.getName() + "_стоимость_мероприятий_";
+        String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8);
+        String correctFileName = encodedFileName.replace('+', ' ');
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename="+ correctFileName + currentDateTime + ".xlsx";
+        response.setHeader(headerKey, headerValue);
+
         RiskPieChartExcelExporter riskPieChartExcelExporter = new RiskPieChartExcelExporter(risk, measures);
         riskPieChartExcelExporter.export(response);
 

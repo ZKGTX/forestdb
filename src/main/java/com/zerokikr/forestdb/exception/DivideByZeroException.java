@@ -1,0 +1,9 @@
+package com.zerokikr.forestdb.exception;
+
+public class DivideByZeroException extends ArithmeticException {
+
+
+    public DivideByZeroException(String message) {
+        super(message);
+    }
+}

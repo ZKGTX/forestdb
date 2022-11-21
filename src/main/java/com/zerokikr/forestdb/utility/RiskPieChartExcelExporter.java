@@ -37,6 +37,7 @@ public class RiskPieChartExcelExporter {
             style.setFont(font);
             createCell(row, 0, "Мероприятие", style);
             createCell(row, 1, "Стоимость, руб.", style);
+            createCell(row, 2, "Примечание", style);
     }
 
     private void createCell(Row row, int columnCount, Object value, CellStyle style) {
@@ -61,14 +62,22 @@ public class RiskPieChartExcelExporter {
             Row row = sheet.createRow(rowCount++);
             int columnCount = 0;
             createCell(row, columnCount++, action.getName(), style);
-            createCell(row, columnCount++, yearWorkCost(action, year), style);
+            try {
+                createCell(row, columnCount++, yearWorkCost(action, year), style);
+            } catch (NumberFormatException nFE) {
+                createCell(row, columnCount++, "данные за "  + year + " год отсутствуют", style);
+            }
         }
+        sheet.autoSizeColumn(0);
+        sheet.autoSizeColumn(1);
+        sheet.autoSizeColumn(2);
+
     }
 
     private void createPieChart () {
         int range = getActions(measures).size();
         XSSFDrawing drawing = sheet.createDrawingPatriarch();
-        XSSFClientAnchor anchor = drawing.createAnchor(0, 0, 0,0, 0, range+1, 7, range+25);
+        XSSFClientAnchor anchor = drawing.createAnchor(0, 0, 0,0, 0, range+1, 5, range+25);
         XSSFChart chart = drawing.createChart(anchor);
         chart.setTitleText(risk.getSubject().getName() + "\n" + risk.getName() + " : сравнительная стоимость мероприятий");
         chart.setTitleOverlay(false);
@@ -92,6 +101,8 @@ public class RiskPieChartExcelExporter {
         ServletOutputStream outputStream = response.getOutputStream();
         workbook.write(outputStream);
         outputStream.close();
+        workbook.close();
+
     }
 
     public List<Action> getActions(List<Measure> measures) {
@@ -118,7 +129,7 @@ public class RiskPieChartExcelExporter {
         return years;
     }
 
-    public Double yearWorkCost (Action action, Integer yearValue) {
+    public Double yearWorkCost (Action action, Integer yearValue) throws NumberFormatException {
         List <ReportingYear> reportingYears = action.getReportingYears();
         for (ReportingYear reportingYear : reportingYears) {
             if (Objects.equals(reportingYear.getYear(), yearValue)) {
@@ -132,7 +143,7 @@ public class RiskPieChartExcelExporter {
         return 0.0;
     }
 
-    public Double cleanValue (String rawValue) {
+    public Double cleanValue (String rawValue) throws NumberFormatException {
         String cleanValue = removeStars(rawValue);
         return Double.parseDouble(convertCommasToDots(cleanValue));
     }

@@ -25,6 +25,9 @@ public class SubjectBarChartExcelExporter {
 
     private List<Risk> risks;
 
+    private List<String> messages;
+
+
     public SubjectBarChartExcelExporter(Subject subject, List<Risk> risks) {
         this.subject = subject;
         this.risks = risks;
@@ -40,8 +43,9 @@ public class SubjectBarChartExcelExporter {
         font.setFontHeight(14);
         style.setFont(font);
         createCell(row, 0, "Климатический риск", style);
-        createCell(row, 1, "% выполнения мероприятий", style);
-        createCell(row, 2, "Кол-во мероприятий", style);
+        createCell(row, 1, "Общий % выполнения мероприятий", style);
+        createCell(row, 2, "Общее кол-во мероприятий", style);
+        createCell(row, 3, "Примечание", style);
     }
 
     private void createCell(Row row, int columnCount, Object value, CellStyle style) {
@@ -66,11 +70,17 @@ public class SubjectBarChartExcelExporter {
         font.setFontHeight(10);
         style.setFont(font);
         for (Risk risk : risks) {
+            messages = new ArrayList<>();
             Row row = sheet.createRow(rowCount++);
             int columnCount = 0;
             createCell(row, columnCount++, risk.getName(), style);
-            createCell(row, columnCount++, totalCompletionRate(risk, year), style);
+            createCell(row, columnCount++, totalCompletionPercentage(risk, year), style);
             createCell(row, columnCount++, totalNumberOfActions(risk, year), style);
+            createCell(row, columnCount++, messages.size() != 0 ? messages.toString() : "", style);
+            sheet.autoSizeColumn(0);
+            sheet.autoSizeColumn(1);
+            sheet.autoSizeColumn(2);
+            sheet.autoSizeColumn(3);
         }
     }
 
@@ -78,12 +88,12 @@ public class SubjectBarChartExcelExporter {
         int range = subject.getRisks().size();
 
         XSSFDrawing drawing = sheet.createDrawingPatriarch();
-        XSSFClientAnchor anchor = drawing.createAnchor(0, 0, 0,0, 0, range+1, 7, range+25);
+        XSSFClientAnchor anchor = drawing.createAnchor(0, 0, 0,0, 0, range+1, 4, range+25);
         XSSFChart chart = drawing.createChart(anchor);
         chart.setTitleText(subject.getName() + " : процент выполнения мероприятий");
         chart.setTitleOverlay(false);
         XDDFChartLegend legend = chart.getOrAddLegend();
-        legend.setPosition(LegendPosition.TOP_RIGHT);
+        legend.setPosition(LegendPosition.BOTTOM);
 
         XDDFCategoryAxis bottomAxis = chart.createCategoryAxis(AxisPosition.BOTTOM);
         bottomAxis.setTitle("Климатический риск");
@@ -115,9 +125,10 @@ public class SubjectBarChartExcelExporter {
         ServletOutputStream outputStream = response.getOutputStream();
         workbook.write(outputStream);
         outputStream.close();
+        workbook.close();
     }
 
-    public Double totalCompletionRate (Risk risk, Integer year) {
+    public Double totalCompletionPercentage(Risk risk, Integer year) {
         List<Action> actions = getActions(risk.getMeasures());
         BigDecimal numerator = BigDecimal.ZERO;
         BigDecimal denominator = BigDecimal.ZERO;
@@ -128,7 +139,7 @@ public class SubjectBarChartExcelExporter {
         if (denominator.compareTo(BigDecimal.ZERO) == 0) {
             return 0.0;
         }
-        BigDecimal totalCompletionRate = numerator.divide(denominator, RoundingMode.HALF_UP);
+        BigDecimal totalCompletionRate = numerator.divide(denominator, 1, RoundingMode.UP);
         BigDecimal hundredPercent = new BigDecimal("100");
         return totalCompletionRate.compareTo(hundredPercent) >= 0 ? hundredPercent.doubleValue() : totalCompletionRate.doubleValue();
     }
@@ -149,18 +160,42 @@ public class SubjectBarChartExcelExporter {
 
     public BigDecimal calculateNumeratorPart(Action action, Integer year) throws ArithmeticException, NumberFormatException {
         List <ReportingYear> reportingYears = action.getReportingYears();
+
         for (ReportingYear reportingYear : reportingYears) {
+
             if (Objects.equals(reportingYear.getYear(), year)) {
-                BigDecimal plannedWorkValue = new BigDecimal(cleanValue(reportingYear.getPlannedWorkAmount())).setScale(2, RoundingMode.HALF_UP);
-                BigDecimal actualWorkValue = new BigDecimal(cleanValue(reportingYear.getActualWorkAmount())).setScale(2, RoundingMode.HALF_UP);
-                BigDecimal hundredPercent = new BigDecimal("100");
-                BigDecimal actionCompletionRate = actualWorkValue.divide(plannedWorkValue, RoundingMode.HALF_UP);
-                BigDecimal actionCompletionPercentage = actionCompletionRate.multiply(hundredPercent).setScale(0, RoundingMode.HALF_DOWN);
-                int completionPercentageEvaluation =  actionCompletionPercentage.compareTo(hundredPercent);
-                if (completionPercentageEvaluation >= 0) {
-                    return plannedWorkValue.multiply(hundredPercent).setScale(1, RoundingMode.HALF_DOWN);
+                BigDecimal plannedWorkValue = BigDecimal.ZERO;
+                BigDecimal actualWorkValue = BigDecimal.ZERO;
+
+                try {
+                    plannedWorkValue = plannedWorkValue.add(cleanValue(reportingYear.getPlannedWorkAmount())).setScale(2, RoundingMode.HALF_UP);
+                } catch (NumberFormatException e) {
+                    messages.add(reportingYear.getAction().getName() + " : данные по плановому объему за " + year + " год отсутствуют");
                 }
-                return plannedWorkValue.multiply(actionCompletionPercentage).setScale(1, RoundingMode.HALF_DOWN);
+
+                try {
+                    actualWorkValue = actualWorkValue.add(cleanValue(reportingYear.getActualWorkAmount())).setScale(2, RoundingMode.HALF_UP);
+                } catch (NumberFormatException e) {
+                    messages.add(reportingYear.getAction().getName() + ": данные по фактическому объему за " + year + " год отсутствуют");
+                }
+
+                if (plannedWorkValue.compareTo(BigDecimal.ZERO) == 0) {
+                    return BigDecimal.ZERO;
+                }
+
+                BigDecimal hundredPercent = new BigDecimal("100");
+
+                BigDecimal actionCompletionRate = actualWorkValue.divide(plannedWorkValue, 2, RoundingMode.HALF_UP);
+
+                BigDecimal actionCompletionPercentage = actionCompletionRate.multiply(hundredPercent).setScale(1, RoundingMode.UP);
+
+                int completionPercentageEvaluation = actionCompletionPercentage.compareTo(hundredPercent);
+
+                if (completionPercentageEvaluation >= 0) {
+                    return plannedWorkValue.multiply(hundredPercent).setScale(1, RoundingMode.UP);
+                }
+
+                return plannedWorkValue.multiply(actionCompletionPercentage).setScale(1, RoundingMode.UP);
             }
         }
         return BigDecimal.ZERO;
@@ -170,7 +205,10 @@ public class SubjectBarChartExcelExporter {
         List<ReportingYear> reportingYears = action.getReportingYears();
         for (ReportingYear reportingYear : reportingYears) {
             if (Objects.equals(reportingYear.getYear(), year)) {
-                return new BigDecimal(cleanValue(reportingYear.getPlannedWorkAmount())).setScale(1, RoundingMode.HALF_UP);
+                try {
+                    return cleanValue(reportingYear.getPlannedWorkAmount()).setScale(1, RoundingMode.HALF_UP);
+                } catch (NumberFormatException e) {
+                }
             }
         }
         return BigDecimal.ZERO;
@@ -209,9 +247,9 @@ public class SubjectBarChartExcelExporter {
         return years;
     }
 
-    public String cleanValue (String rawValue) {
-        String cleanValue = removeStars(rawValue);
-        return convertCommasToDots(cleanValue);
+    public BigDecimal cleanValue (String rawValue) throws NumberFormatException {
+        String cleanValue = convertCommasToDots(removeStars(rawValue));
+        return new BigDecimal(cleanValue);
     }
 
     public String convertCommasToDots (String s) {

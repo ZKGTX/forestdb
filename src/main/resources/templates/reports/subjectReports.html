@@ -31,26 +31,27 @@
         </thead>
         <tbody>
         <tr>
-
-            <td>общий % выполнения мероприятий по климатическим рискам</td>
+            <td>общий % выполнения мероприятий (диграмма)</td>
             <td><a th:href="@{/subjects/export(subjectId = ${subject.id})}"
                    class="btn btn-success btn-sm">
                 ↓ загрузить
             </a></td>
         </tr>
         <tr>
-
+            <td>список мероприятий и % их выполнения</td>
+            <td><a th:href="@{/subjects/exportPercents(subjectId = ${subject.id})}"
+                   class="btn btn-success btn-sm">
+                ↓ загрузить
+            </a></td>
+        </tr>
+        <tr>
             <td>список климатических рисков и отчеты по ним</td>
             <td><a th:href="@{/risks/(subjectId = ${subject.id})}"
                    class="btn btn-info btn-sm">
                 → перейти
             </a></td>
         </tr>
-        <tr>
 
-            <td>Larry</td>
-            <td>the Bird</td>
-        </tr>
         </tbody>
     </table>
     <a th:href="@{/subjects}">Назад к списку субъектов РФ</a>
