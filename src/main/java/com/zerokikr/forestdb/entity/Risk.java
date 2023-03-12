@@ -15,7 +15,7 @@ public class Risk {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name")
+    @Column(name = "name", unique = true)
     @NotNull(message = "название климатического риска не может быть пустым")
     @Pattern(regexp="[а-яёА-ЯЁ0-9 ,.()-]+", message = "название климатического риска должно состоять только из русских букв")
     private String name;
@@ -26,6 +26,9 @@ public class Risk {
 
     @OneToMany(mappedBy = "risk", fetch = FetchType.LAZY)
     private List<Measure> measures;
+
+    @Column(name = "last_update")
+    private String lastUpdate;
 
     public Risk() {
     }
@@ -64,6 +67,14 @@ public class Risk {
 
     public void setMeasures(List<Measure> measures) {
         this.measures = measures;
+    }
+
+    public String getLastUpdate() {
+        return lastUpdate;
+    }
+
+    public void setLastUpdate(String lastUpdate) {
+        this.lastUpdate = lastUpdate;
     }
 
     @Override

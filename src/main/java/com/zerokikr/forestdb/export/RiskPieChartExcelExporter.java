@@ -1,4 +1,4 @@
-package com.zerokikr.forestdb.utility;
+package com.zerokikr.forestdb.export;
 
 import com.zerokikr.forestdb.entity.*;
 import org.apache.poi.ss.usermodel.Cell;
@@ -35,6 +35,7 @@ public class RiskPieChartExcelExporter {
             font.setBold(true);
             font.setFontHeight(14);
             style.setFont(font);
+            style.setWrapText(true);
             createCell(row, 0, "Мероприятие", style);
             createCell(row, 1, "Стоимость, руб.", style);
             createCell(row, 2, "Примечание", style);
@@ -48,6 +49,20 @@ public class RiskPieChartExcelExporter {
         } else {
             cell.setCellValue((String) value);
         }
+
+        cell.setCellStyle(style);
+    }
+
+    private void createCell(Row row, int columnCount, Object value, int customHeight,  CellStyle style) {
+        sheet.autoSizeColumn(columnCount);
+        Cell cell = row.createCell(columnCount);
+        if (value instanceof Double) {
+            cell.setCellValue((Double) value);
+        } else {
+            cell.setCellValue((String) value);
+        }
+        cell.getRow().setHeightInPoints(cell.getSheet().getDefaultRowHeightInPoints() * customHeight);
+
         cell.setCellStyle(style);
     }
 
@@ -57,6 +72,7 @@ public class RiskPieChartExcelExporter {
         XSSFFont font = workbook.createFont();
         font.setFontHeight(10);
         style.setFont(font);
+        style.setWrapText(true);
         List<Action> actions = getActions(measures);
         for (Action action : actions) {
             Row row = sheet.createRow(rowCount++);
@@ -143,7 +159,7 @@ public class RiskPieChartExcelExporter {
         return 0.0;
     }
 
-    public Double cleanValue (String rawValue) throws NumberFormatException {
+    public Double cleanValue (String rawValue) throws NumberFormatException, NullPointerException {
         String cleanValue = removeStars(rawValue);
         return Double.parseDouble(convertCommasToDots(cleanValue));
     }
@@ -155,4 +171,6 @@ public class RiskPieChartExcelExporter {
     public String removeStars (String s) {
         return s.replaceAll("[*]+", "");
     }
+
+
 }

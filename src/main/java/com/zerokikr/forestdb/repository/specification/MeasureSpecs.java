@@ -12,7 +12,7 @@ import javax.persistence.criteria.Root;
 public class MeasureSpecs {
 
     public static Specification<Measure> nameContains (String keyword) {
-        return (root, query, criteriaBuilder) -> criteriaBuilder.like(root.get("name"), "%" + keyword + "%");
+        return (root, query, criteriaBuilder) -> criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + keyword + "%");
     }
 
     public static Specification<Measure> riskIdEqualsTo (Long riskId) {

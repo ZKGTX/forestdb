@@ -1,7 +1,6 @@
-package com.zerokikr.forestdb.utility;
+package com.zerokikr.forestdb.export;
 
 import com.zerokikr.forestdb.entity.*;
-import org.apache.poi.ss.formula.functions.Column;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
@@ -39,6 +38,7 @@ public class PercentageSubjectExcelExporter {
         font.setBold(true);
         font.setFontHeight(14);
         style.setFont(font);
+        style.setWrapText(true);
         createCell(row, 0, "Наименование мероприятия", style);
         createCell(row, 1, "% выполнения", style);
         createCell(row, 2, "Примечание", style);
@@ -52,6 +52,20 @@ public class PercentageSubjectExcelExporter {
         } else {
             cell.setCellValue((String) value);
         }
+
+        cell.setCellStyle(style);
+    }
+
+    private void createCell(Row row, int columnCount, Object value, int customHeight, CellStyle style) {
+        sheet.autoSizeColumn(columnCount);
+        Cell cell = row.createCell(columnCount);
+        if (value instanceof Double) {
+            cell.setCellValue((Double) value);
+        } else {
+            cell.setCellValue((String) value);
+        }
+        cell.getRow().setHeightInPoints(cell.getSheet().getDefaultRowHeightInPoints() * customHeight);
+
         cell.setCellStyle(style);
     }
 
@@ -61,6 +75,7 @@ public class PercentageSubjectExcelExporter {
         XSSFFont font = workbook.createFont();
         font.setFontHeight(10);
         style.setFont(font);
+        style.setWrapText(true);
         List<Action> actions = getActions(getMeasures(risks));
         for (Action action : actions) {
             messages = new ArrayList<>();
@@ -68,7 +83,7 @@ public class PercentageSubjectExcelExporter {
             int columnCount = 0;
             createCell(row, columnCount++, action.getName(), style);
             createCell(row, columnCount++, completionPercentage(action, year), style);
-            createCell(row, columnCount++, messages.size() != 0 ? messages.toString() : "", style);
+            createCell(row, columnCount++, messages.size() != 0 ? printMessages(messages) : "", messages.size() + 1, style);
         }
         sheet.autoSizeColumn(0);
         sheet.autoSizeColumn(1);
@@ -89,13 +104,13 @@ public class PercentageSubjectExcelExporter {
                 try {
                     plannedWorkValue = plannedWorkValue.add(cleanValue(reportingYear.getPlannedWorkAmount())).setScale(2, RoundingMode.HALF_UP);
                 } catch (NumberFormatException e) {
-                    messages.add("данные по плановому объему за " + year + " год отсутствуют");
+                    messages.add("цифры планового объема за " + year + " год отсутствуют");
                 }
 
                 try {
                     actualWorkValue = actualWorkValue.add(cleanValue(reportingYear.getActualWorkAmount())).setScale(2, RoundingMode.HALF_UP);
                 } catch (NumberFormatException e) {
-                    messages.add("данные по фактическому объему за " + year + " год отсутствуют");
+                    messages.add("цифры фактического объема за " + year + " год отсутствуют");
                 }
 
                 if (plannedWorkValue.compareTo(BigDecimal.ZERO) == 0) {
@@ -107,6 +122,12 @@ public class PercentageSubjectExcelExporter {
                 BigDecimal hundredPercent = new BigDecimal("100");
 
                 completionPercentage = completionPercentage.add(actionCompletionRate.multiply(hundredPercent)).setScale(1, RoundingMode.UP);
+
+                int completionPercentageEvaluation = completionPercentage.compareTo(hundredPercent);
+
+                if (completionPercentageEvaluation >= 0) {
+                    return hundredPercent.doubleValue();
+                }
 
                 return completionPercentage.doubleValue();
             }
@@ -170,6 +191,16 @@ public class PercentageSubjectExcelExporter {
 
     public String removeStars (String s) {
         return s.replaceAll("[*]+", "");
+    }
+
+    public String printMessages (List<String>messages) {
+        StringBuilder sb = new StringBuilder();
+        for (String s : messages) {
+            sb.append(s);
+            sb.append(";");
+            sb.append("\n");
+        }
+        return sb.toString();
     }
 
 

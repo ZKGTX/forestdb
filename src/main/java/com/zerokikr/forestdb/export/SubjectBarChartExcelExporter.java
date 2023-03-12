@@ -1,4 +1,4 @@
-package com.zerokikr.forestdb.utility;
+package com.zerokikr.forestdb.export;
 
 import com.zerokikr.forestdb.entity.*;
 import org.apache.poi.ss.usermodel.Cell;
@@ -23,6 +23,8 @@ public class SubjectBarChartExcelExporter {
 
     private Subject subject;
 
+    private List<Subject> subjects;
+
     private List<Risk> risks;
 
     private List<String> messages;
@@ -34,6 +36,7 @@ public class SubjectBarChartExcelExporter {
         workbook = new XSSFWorkbook();
     }
 
+
     private void writeHeaders(Integer year) {
         sheet = workbook.createSheet(year.toString());
         Row row = sheet.createRow(0);
@@ -42,11 +45,13 @@ public class SubjectBarChartExcelExporter {
         font.setBold(true);
         font.setFontHeight(14);
         style.setFont(font);
+        style.setWrapText(true);
         createCell(row, 0, "Климатический риск", style);
         createCell(row, 1, "Общий % выполнения мероприятий", style);
         createCell(row, 2, "Общее кол-во мероприятий", style);
         createCell(row, 3, "Примечание", style);
     }
+
 
     private void createCell(Row row, int columnCount, Object value, CellStyle style) {
         sheet.autoSizeColumn(columnCount);
@@ -63,12 +68,24 @@ public class SubjectBarChartExcelExporter {
         cell.setCellStyle(style);
     }
 
+    private void createCell(Row row, int columnCount, Object value, int customHeight, CellStyle style) {
+        Cell cell = row.createCell(columnCount);
+        if (value instanceof Double) {
+            cell.setCellValue((Double) value);
+        } else {
+            cell.setCellValue((String) value);
+        }
+        cell.getRow().setHeightInPoints(cell.getSheet().getDefaultRowHeightInPoints() * customHeight);
+        cell.setCellStyle(style);
+    }
+
     private void writeDataRows(Integer year) {
         int rowCount = 1;
         CellStyle style = workbook.createCellStyle();
         XSSFFont font = workbook.createFont();
         font.setFontHeight(10);
         style.setFont(font);
+        style.setWrapText(true);
         for (Risk risk : risks) {
             messages = new ArrayList<>();
             Row row = sheet.createRow(rowCount++);
@@ -76,12 +93,12 @@ public class SubjectBarChartExcelExporter {
             createCell(row, columnCount++, risk.getName(), style);
             createCell(row, columnCount++, totalCompletionPercentage(risk, year), style);
             createCell(row, columnCount++, totalNumberOfActions(risk, year), style);
-            createCell(row, columnCount++, messages.size() != 0 ? messages.toString() : "", style);
-            sheet.autoSizeColumn(0);
-            sheet.autoSizeColumn(1);
-            sheet.autoSizeColumn(2);
-            sheet.autoSizeColumn(3);
+            createCell(row, columnCount++, messages.size() != 0 ? printMessages(messages) : "", messages.size() + 1, style);
         }
+        sheet.autoSizeColumn(0);
+        sheet.autoSizeColumn(1);
+        sheet.autoSizeColumn(2);
+        sheet.autoSizeColumn(3);
     }
 
     private void createBarChart () {
@@ -128,6 +145,8 @@ public class SubjectBarChartExcelExporter {
         workbook.close();
     }
 
+
+
     public Double totalCompletionPercentage(Risk risk, Integer year) {
         List<Action> actions = getActions(risk.getMeasures());
         BigDecimal numerator = BigDecimal.ZERO;
@@ -143,6 +162,8 @@ public class SubjectBarChartExcelExporter {
         BigDecimal hundredPercent = new BigDecimal("100");
         return totalCompletionRate.compareTo(hundredPercent) >= 0 ? hundredPercent.doubleValue() : totalCompletionRate.doubleValue();
     }
+
+
 
     public int totalNumberOfActions(Risk risk, Integer year) {
         List<Action> actions = getActions(risk.getMeasures());
@@ -170,13 +191,13 @@ public class SubjectBarChartExcelExporter {
                 try {
                     plannedWorkValue = plannedWorkValue.add(cleanValue(reportingYear.getPlannedWorkAmount())).setScale(2, RoundingMode.HALF_UP);
                 } catch (NumberFormatException e) {
-                    messages.add(reportingYear.getAction().getName() + " : данные по плановому объему за " + year + " год отсутствуют");
+                    messages.add(action.getName() + " : цифры планового объема за " + year + " год отсутствуют");
                 }
 
                 try {
                     actualWorkValue = actualWorkValue.add(cleanValue(reportingYear.getActualWorkAmount())).setScale(2, RoundingMode.HALF_UP);
                 } catch (NumberFormatException e) {
-                    messages.add(reportingYear.getAction().getName() + ": данные по фактическому объему за " + year + " год отсутствуют");
+                    messages.add(action.getName() + ": цифры фактического объема за " + year + " год отсутствуют");
                 }
 
                 if (plannedWorkValue.compareTo(BigDecimal.ZERO) == 0) {
@@ -260,6 +281,15 @@ public class SubjectBarChartExcelExporter {
         return s.replaceAll("[*]+", "");
     }
 
+    public String printMessages (List<String>messages) {
+        StringBuilder sb = new StringBuilder();
+        for (String s : messages) {
+            sb.append(s);
+            sb.append(";");
+            sb.append("\n");
+        }
+        return sb.toString();
+    }
 
 }
 

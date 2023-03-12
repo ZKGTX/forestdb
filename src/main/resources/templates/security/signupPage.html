@@ -24,13 +24,23 @@
 
         <input type="hidden" th:field="*{id}"/>
 
+        <div class="form-group">
+            <label for="userSubjectSelect">субъект РФ:</label>
+            <select class="form-control mb-2 col-4" id="userSubjectSelect" name="subjectName" th:field="*{subjectName}" >
+                <option th:each="option : ${subjectNames}" th:value="${option}" th:text="${option}"></option>
+            </select>
+        </div>
+
+        <p th:if="${#fields.hasErrors('subjectName')}" th:errorclass="error" th:errors="*{subjectName}"
+           class="alert alert-danger" role="alert"/>
+
         <input type="text" th:field="*{email}"
                class="form-control mb-4 col-4" placeholder="адрес электронной почты">
 
         <p th:if="${#fields.hasErrors('email')}" th:errorclass="error" th:errors="*{email}"
            class="alert alert-danger" role="alert"/>
 
-        <p th:if="${#fields.hasGlobalErrors()}" th:each="emailError : ${#fields.errors('global')}" th:text="${emailError}" class="error" />
+        <p th:if="${#fields.hasGlobalErrors()}" th:each="emailError : ${#fields.errors('global')}" th:text="${emailError}" class="alert alert-danger" />
 
         <input type="text" th:field="*{firstName}"
                class="form-control mb-4 col-4" placeholder="имя">
@@ -43,6 +53,7 @@
 
         <p th:if="${#fields.hasErrors('lastName')}" th:errorclass="error" th:errors="*{lastName}"
            class="alert alert-danger" role="alert"/>
+
 
         <input type="text" th:field="*{password}"
                class="form-control mb-4 col-4" placeholder="пароль">
@@ -57,6 +68,8 @@
            class="alert alert-danger" role="alert"/>
 
         <p th:if="${#fields.hasGlobalErrors()}" th:each="passwordError : ${#fields.errors('global')}" th:text="${passwordError}" class="alert alert-danger" role="alert" />
+
+
 
         <button type="submit" class="btn btn-success col-2">Зарегистрироваться</button>
 

@@ -17,8 +17,14 @@ public class Action {
     private Long id;
 
     @Column(name = "name")
-    @NotNull(message = "название мероприятия не может быть пустым")
+    @NotNull(message = "укажите название нового мероприятия")
     private String name;
+
+    @Column(name = "commentary")
+    private String commentary;
+
+    @Column(name = "original")
+    private Boolean original;
 
     @OneToMany(mappedBy = "action", fetch = FetchType.LAZY)
     private List<ReportingYear> reportingYears;
@@ -26,6 +32,9 @@ public class Action {
     @ManyToOne
     @JoinColumn(name ="measure_id")
     private Measure measure;
+
+    @Column(name = "last_update")
+    private String lastUpdate;
 
 
     public Action() {
@@ -52,6 +61,22 @@ public class Action {
         this.name = name;
     }
 
+    public String getCommentary() {
+        return commentary;
+    }
+
+    public void setCommentary(String commentary) {
+        this.commentary = commentary;
+    }
+
+    public Boolean getOriginal() {
+        return original;
+    }
+
+    public void setOriginal(Boolean original) {
+        this.original = original;
+    }
+
     public List<ReportingYear> getReportingYears() {
         return reportingYears;
     }
@@ -66,6 +91,14 @@ public class Action {
 
     public void setMeasure(Measure measure) {
         this.measure = measure;
+    }
+
+    public String getLastUpdate() {
+        return lastUpdate;
+    }
+
+    public void setLastUpdate(String lastUpdate) {
+        this.lastUpdate = lastUpdate;
     }
 
     @Override

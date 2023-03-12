@@ -4,12 +4,11 @@ import com.zerokikr.forestdb.entity.Measure;
 import com.zerokikr.forestdb.entity.Risk;
 import com.zerokikr.forestdb.entity.Subject;
 import com.zerokikr.forestdb.repository.specification.RiskSpecs;
-import com.zerokikr.forestdb.repository.specification.SubjectSpecs;
 import com.zerokikr.forestdb.service.MeasureService;
-import com.zerokikr.forestdb.service.ReportingYearService;
 import com.zerokikr.forestdb.service.RiskService;
 import com.zerokikr.forestdb.service.SubjectService;
-import com.zerokikr.forestdb.utility.RiskPieChartExcelExporter;
+import com.zerokikr.forestdb.export.RiskPieChartExcelExporter;
+import com.zerokikr.forestdb.utility.TimeNameSetter;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Controller;
@@ -19,6 +18,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -57,7 +57,8 @@ public class RiskController {
         Specification<Risk> spec = Specification.where(RiskSpecs.subjectIdEqualsTo(subjectId));
         Subject subject = subjectService.getSubjectById(subjectId);
         if (keyword != null) {
-            spec = spec.and(RiskSpecs.nameContains(keyword));
+            String theKeyword = keyword.toLowerCase();
+            spec = spec.and(RiskSpecs.nameContains(theKeyword));
         }
         List<Risk> allRisks = riskService.getRisksBySubjectIdAndKeyword(spec);
         theModel.addAttribute("allRisks", allRisks);
@@ -94,6 +95,7 @@ public class RiskController {
         if (bindingResult.hasErrors()) {
             return new ModelAndView( "risks/addRisk");
         }
+        risk.setLastUpdate(TimeNameSetter.setTimeName());
         riskService.saveRisk(risk);
         theModel.addAttribute("subjectId", risk.getSubject().getId());
         return new ModelAndView("redirect:/risks", theModel);
@@ -107,7 +109,7 @@ public class RiskController {
     }
 
     @GetMapping("risks/export")
-    public void exportToExcel (HttpServletResponse response, @RequestParam ("riskId") Long riskId) throws IOException {
+    public void exportToExcel (HttpServletResponse response, @RequestParam ("riskId") Long riskId, RedirectAttributes redirectAttributes) throws IOException {
         response.setContentType("application/octet-stream");
         DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
         String currentDateTime = dateFormatter.format(new Date());
@@ -123,12 +125,10 @@ public class RiskController {
         response.setHeader(headerKey, headerValue);
 
         RiskPieChartExcelExporter riskPieChartExcelExporter = new RiskPieChartExcelExporter(risk, measures);
-        riskPieChartExcelExporter.export(response);
-
-
-
+        try {
+            riskPieChartExcelExporter.export(response);
+        } catch (NullPointerException e) {
+            redirectAttributes.addFlashAttribute("exportError", "Не удается сгенертровать отчет. Скорее всего нет данных об одном или нескольких мероприятиях");
+        }
     }
-
-
-
 }

@@ -1,9 +1,11 @@
 package com.zerokikr.forestdb.controller;
 
 import com.zerokikr.forestdb.entity.Role;
+import com.zerokikr.forestdb.entity.Subject;
 import com.zerokikr.forestdb.entity.User;
 import com.zerokikr.forestdb.exception.UserExistsException;
 import com.zerokikr.forestdb.repository.RoleRepository;
+import com.zerokikr.forestdb.service.SubjectService;
 import com.zerokikr.forestdb.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
@@ -19,11 +21,14 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
 public class UserController {
 
+    @Autowired
+    private SubjectService subjectService;
     private UserService userService;
 
     @Autowired
@@ -53,6 +58,13 @@ public class UserController {
     public String showUpdateUserForm(@RequestParam ("userId") long userId, Model theModel) {
         User user = userService.getUserById(userId);
         List<Role> roles = (List<Role>) roleRepository.findAll();
+        List <String> subjectNames = new ArrayList<>();
+        subjectNames.add("");
+        List<Subject> subjects = subjectService.getAllSubjects();
+        for (Subject s: subjects) {
+            subjectNames.add(s.getName());
+        }
+        theModel.addAttribute("subjectNames", subjectNames);
         theModel.addAttribute("user", user);
         theModel.addAttribute("roles", roles);
         return "security/updateUser";
@@ -69,6 +81,7 @@ public class UserController {
 
         String emailError = userService.emailExists(user.getEmail());
 
+
         if (!emailError.isEmpty()) {
             ObjectError sameEmail = new ObjectError("emailError", emailError);
             bindingResult.addError(sameEmail);
@@ -82,6 +95,13 @@ public class UserController {
         }
 
         if (bindingResult.hasErrors()) {
+            List <String> subjectNames = new ArrayList<>();
+            subjectNames.add("");
+            List<Subject> subjects = subjectService.getAllSubjects();
+            for (Subject s: subjects) {
+                subjectNames.add(s.getName());
+            }
+            theModel.addAttribute("subjectNames", subjectNames);
             return new ModelAndView("security/signupPage");
         }
 
@@ -92,8 +112,18 @@ public class UserController {
     }
 
     @PostMapping("/users/doUpdate")
-    public String updateTheUser(@ModelAttribute("user") @Valid User user, BindingResult bindingResult) {
+    public String updateTheUser(ModelMap theModel, @ModelAttribute("user") @Valid User user, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
+            List <String> subjectNames = new ArrayList<>();
+            subjectNames.add("");
+            List<Subject> subjects = subjectService.getAllSubjects();
+            for (Subject s: subjects) {
+                subjectNames.add(s.getName());
+            }
+            List<Role> roles = (List<Role>) roleRepository.findAll();
+            theModel.addAttribute("roles", roles);
+            theModel.addAttribute("subjectNames", subjectNames);
+
             return "security/updateUser";
         }
         userService.updateUser(user);

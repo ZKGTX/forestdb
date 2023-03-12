@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <title>Редактировать ежегодный отчет</title>
+</head>
+
+<body>
+
+<div class="container">
+    <h3>Добавить / редактировать ежегодный отчет</h3>
+    <hr>
+
+    <p class="h4 mb-4">Введите данные: </p>
+
+    <form th:action="@{/years/saveNew}"
+          th:object="${reportingYear}"
+          method="post" style="max-width: 600px; margin: 0 auto;">
+        <input type="hidden" th:field="*{action.id}" />
+
+        <input type="hidden" th:field="*{id}" />
+
+        <div class="form-group row">
+            <label class="col-5 col-form-label">год: </label>
+            <div class="col-8">
+                <input type="text" th:field="*{year}" class="form-control"
+                />
+            </div>
+        </div>
+
+        <p th:if="${#fields.hasErrors('year')}" th:errorclass="error" th:errors="*{year}"
+           class="alert alert-danger" role="alert"/>
+
+
+        <div class="form-group row">
+            <label class="col-5 col-form-label">объем запланированных работ (лесной план): </label>
+            <div class="col-8">
+                <input type="text" th:field="*{plannedWorkAmount}" class="form-control"
+                />
+            </div>
+        </div>
+
+        <p th:if="${#fields.hasErrors('plannedWorkAmount')}" th:errorclass="error" th:errors="*{plannedWorkAmount}"
+           class="alert alert-danger" role="alert"/>
+
+        <div class="form-group row">
+            <label class="col-5 col-form-label">объем выполненных работ (фактический): </label>
+            <div class="col-8">
+                <input type="text" th:field="*{actualWorkAmount}" class="form-control"
+                />
+            </div>
+        </div>
+
+        <p th:if="${#fields.hasErrors('actualWorkAmount')}" th:errorclass="error" th:errors="*{actualWorkAmount}"
+           class="alert alert-danger" role="alert"/>
+
+        <div class="form-group row">
+            <label class="col-5 col-form-label">единица измерения работ: </label>
+            <div class="col-8">
+                <input type="text" th:field="*{workMeasuringUnits}" class="form-control"
+                />
+            </div>
+        </div>
+
+        <p th:if="${#fields.hasErrors('workMeasuringUnits')}" th:errorclass="error" th:errors="*{workMeasuringUnits}"
+           class="alert alert-danger" role="alert"/>
+
+        <div class="form-group row">
+            <label class="col-5 col-form-label">стоимость работ (лесной план): </label>
+            <div class="col-8">
+                <input type="text" th:field="*{plannedWorkCost}" class="form-control"
+                />
+            </div>
+        </div>
+
+        <p th:if="${#fields.hasErrors('plannedWorkCost')}" th:errorclass="error" th:errors="*{plannedWorkCost}"
+           class="alert alert-danger" role="alert"/>
+
+        <div class="form-group row">
+            <label class="col-5 col-form-label">стоимость работ (фактическая): </label>
+            <div class="col-8">
+                <input type="text" th:field="*{actualWorkCost}" class="form-control"
+                />
+            </div>
+        </div>
+
+        <p th:if="${#fields.hasErrors('actualWorkCost')}" th:errorclass="error" th:errors="*{actualWorkCost}"
+           class="alert alert-danger" role="alert"/>
+
+        <div class="form-group row">
+            <label class="col-5 col-form-label">единица измерения стоимости: </label>
+            <select class="form-control mb-4 col-8" name="costMeasuringUnits" th:field="*{costMeasuringUnits}" >
+                <option th:each="costMeasuringUnits : ${T(com.zerokikr.forestdb.enumeration.Unit).values()}"
+                        th:value="${costMeasuringUnits.getValue()}" th:text="${costMeasuringUnits.getValue()}"></option>
+            </select>
+        </div>
+
+        <p th:if="${#fields.hasErrors('costMeasuringUnits')}" th:errorclass="error" th:errors="*{costMeasuringUnits}"
+           class="alert alert-danger" role="alert"/>
+
+        <div class="form-group row">
+            <label class="col-5 col-form-label">примечания: </label>
+            <div class="col-8">
+                <textarea class="form-control" th:field="*{commentary}" rows="4"></textarea>
+
+            </div>
+        </div>
+
+        <div>
+            <button type="submit" class="btn btn-success">сохранить</button>
+        </div>
+</div>
+</form>
+
+<hr>
+<a th:href="@{/years(actionId=${reportingYear.action.id}, original=${original})}"
+   class="btn btn-outline-primary btn-sm mb-3">назад к списку ежегодных отчетов</a>
+</div>
+</body>
+
+</html>

@@ -25,6 +25,7 @@
             <th>email</th>
             <th>имя</th>
             <th>фамилия</th>
+            <th>субъект</th>
             <th>список ролей</th>
             <th>действие</th>
         </tr>>
@@ -36,6 +37,8 @@
             <td th:text="${tempUser.firstName}"/>
 
             <td th:text="${tempUser.lastName}"/>
+
+            <td th:text="${tempUser.subjectName}"/>
 
             <td th:text="${tempUser.roles}"/>
 

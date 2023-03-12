@@ -29,7 +29,7 @@
                class="form-control mb-4 col-4" placeholder=" Адаптационная мера ID">
 
         <input type="text" th:field="*{name}"
-               class="form-control mb-4 col-4" placeholder="Название Адаптационной меры">
+               class="form-control mb-4" placeholder="название адаптационной меры">
 
         <p th:if="${#fields.hasErrors('name')}" th:errorclass="error" th:errors="*{name}"
            class="alert alert-danger" role="alert"/>

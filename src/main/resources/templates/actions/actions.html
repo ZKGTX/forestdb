@@ -14,8 +14,8 @@
 <div class="container">
     <h6 align="right">
         <div sec:authorize="isAuthenticated()">
-            <div sec:authentication="principal.lastName"></div>
             <div sec:authentication="principal.firstName"></div>
+            <div sec:authentication="principal.lastName"></div>
         </div>
         <a th:href="@{/doLogout}" class="btn btn-outline-secondary btn-sm mb-3 pull-right"
            onclick="if (!(confirm('Вы действительно хотите завершить работу и выйти из системы?'))) return false"> Выйти из системы </a>
@@ -42,12 +42,18 @@
         </div>
     </form>
 
-    <a th:href="@{/actions/add(measureId=${measure.id})}"
+    <a sec:authorize="hasAuthority('admin')" th:href="@{/actions/add(measureId=${measure.id})}"
+       class="btn btn-success mb-3">
+        + добавить мероприятие
+    </a>
+
+    <a sec:authorize="hasAuthority('user')" th:href="@{/actions/addNew(measureId=${measure.id})}"
        class="btn btn-success mb-3">
         + добавить новое мероприятие
     </a>
 
     <a th:href="@{/measures(riskId=${measure.risk.id})}" class="btn btn-outline-primary btn-sm mb-3"> ← назад к списку адаптационных мер</a>
+    <a th:href="@{/subjects}" class="btn btn-outline-secondary btn-sm mb-3"> ↑ назад к списку субъектов РФ</a>
 
 
 
@@ -55,33 +61,40 @@
         <thead class="thead-light">
         <tr>
             <th>Название мероприятия</th>
+            <th>Примечание</th>
             <th>Действие</th>
-        </tr>>
-        </thead>>
+            <th>Изменено:</th>
+        </tr>
+        </thead>
         <tbody>
         <tr th:each="tempAction : ${allActions}">
             <td th:text="${tempAction.name}"/>
 
+            <td th:text="${tempAction.commentary}"/>
+
             <td>
-                <a th:href="@{/years(actionId=${tempAction.id})}"
+                <a th:href="@{/years(actionId=${tempAction.id}, original=${tempAction.original})}"
                    class="btn btn-info btn-sm">
                     → список ежегодных отчетов по мероприятию
                 </a>
 
-                <a th:href="@{/actions/update(actionId=${tempAction.id})}"
+                <a sec:authorize="hasAuthority('admin')" th:href="@{/actions/update(actionId=${tempAction.id})}"
+                   class="btn btn-outline-secondary btn-sm">
+                    изменить мероприятие
+                </a>
+
+                <a sec:authorize="hasAuthority('user')" th:href="@{/actions/updateNew(actionId=${tempAction.id})}"
                    class="btn btn-outline-secondary btn-sm">
                     изменить мероприятие
                 </a>
 
                 <a th:href="@{/actions/delete(actionId=${tempAction.id}, measureId=${tempAction.measure.id})}"
                    class="btn btn-outline-danger btn-sm"
-                   onclick="if (!(confirm('Вы действительно хотите удалить это мероприятие? Все связанные с ним годовые отчеты также будут удалены.'))) return false">
+                   onclick="if (!(confirm('Вы действительно хотите удалить это мероприятие? Все связанные с ним ежегодные отчеты также будут удалены.'))) return false">
                     удалить мероприятие
                 </a>
-
-
-
-            </td>>
+            </td>
+            <td th:text="${tempAction.lastUpdate}"/>
         </tr>
         </tbody>
     </table>

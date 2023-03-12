@@ -39,5 +39,13 @@ public class ActionService {
         actionRepository.deleteById(id);
     }
 
+    public String noComments(String comment) {
+        String message = "";
+        if (comment == null) {
+            message = "укажите причину введения нового мероприятия";
+        }
+        return message;
+    }
+
 
 }

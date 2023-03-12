@@ -26,19 +26,13 @@ public class ReportingYear {
     @JoinColumn(name = "action_id")
     private Action action;
 
-    @Column(name = "true_work_plan")
-    private String trueWorkPlan;
-
-    @Column(name = "true_cost_plan")
-    private String trueCostPlan;
-
     @Column(name = "planned_work_amount")
     @NotNull(message = "необходимо указать запланированный объем работ. допустимые символы: цифры (0-9), разделители (.) (,), примечания (*)")
     @Pattern(regexp="[0-9,.*]+", message = "допустимые символы: цифры (0-9), разделители (.) (,), примечания (*)")
     private String plannedWorkAmount;
 
     @Column(name = "actual_work_amount")
-    @NotNull(message = "необходимо указать выполненный объем работ. допустимые символы: цифры (0-9), разделители (.) (,), примечания (*)")
+    @NotNull(message = "необходимо указать выполненный объем работ. если цифры неизвестны - поставьте 0")
     @Pattern(regexp="[0-9,.*]+", message = "допустимые символы: цифры (0-9), разделители (.) (,), примечания (*)")
     private String actualWorkAmount;
 
@@ -54,7 +48,7 @@ public class ReportingYear {
 
 
     @Column(name = "actual_work_cost")
-    @NotNull(message = "необходимо указать фактическую стоимость работ. допустимые символы: цифры (0-9), разделители (.) (,), примечания (*)")
+    @NotNull(message = "необходимо указать фактическую стоимость работ. если цифры неизвестны - поставьте 0")
     @Pattern(regexp="[0-9,.*]+", message = "допустимые символы: цифры (0-9), разделители (.) (,), примечания (*)")
     private String actualWorkCost;
 
@@ -64,6 +58,15 @@ public class ReportingYear {
 
     @Column(name = "commentary")
     private String commentary;
+
+    @Transient
+    private String currentWork;
+
+    @Transient
+    private String currentCost;
+
+    @Column(name = "last_update")
+    private String lastUpdate;
 
     public ReportingYear() {
     }
@@ -99,22 +102,6 @@ public class ReportingYear {
 
     public void setAction(Action action) {
         this.action = action;
-    }
-
-    public String getTrueWorkPlan() {
-        return trueWorkPlan;
-    }
-
-    public void setTrueWorkPlan(String trueWorkPlan) {
-        this.trueWorkPlan = trueWorkPlan;
-    }
-
-    public String getTrueCostPlan() {
-        return trueCostPlan;
-    }
-
-    public void setTrueCostPlan(String trueCostPlan) {
-        this.trueCostPlan = trueCostPlan;
     }
 
     public String getPlannedWorkAmount() {
@@ -171,6 +158,30 @@ public class ReportingYear {
 
     public void setCommentary(String commentary) {
         this.commentary = commentary;
+    }
+
+    public String getCurrentWork() {
+        return currentWork;
+    }
+
+    public void setCurrentWork(String currentWork) {
+        this.currentWork = currentWork;
+    }
+
+    public String getCurrentCost() {
+        return currentCost;
+    }
+
+    public void setCurrentCost(String currentCost) {
+        this.currentCost = currentCost;
+    }
+
+    public String getLastUpdate() {
+        return lastUpdate;
+    }
+
+    public void setLastUpdate(String lastUpdate) {
+        this.lastUpdate = lastUpdate;
     }
 
     @Override

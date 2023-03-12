@@ -17,10 +17,13 @@ public class Subject {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "name")
+    @Column(name = "name", unique = true)
     @NotNull(message = "название субъекта РФ не может быть пустым")
-    @Pattern(regexp="[а-яёА-ЯЁ ,.()-]+", message = "название субъекта РФ должно состоять только из русских букв")
+    @Pattern(regexp="[а-яёА-ЯЁ0-9 ,.()-]+", message = "название субъекта РФ должно состоять только из русских букв")
     private String name;
+
+    @Column(name = "last_update")
+    private String lastUpdate;
 
     @OneToMany(mappedBy = "subject", fetch = FetchType.LAZY)
     private List<Risk> risks;
@@ -54,6 +57,14 @@ public class Subject {
 
     public void setRisk(List<Risk> risks) {
         this.risks = risks;
+    }
+
+    public String getLastUpdate() {
+        return lastUpdate;
+    }
+
+    public void setLastUpdate(String lastUpdate) {
+        this.lastUpdate = lastUpdate;
     }
 
     @Override

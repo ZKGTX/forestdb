@@ -25,6 +25,7 @@ public class FDbUserDetailsService implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
 
+    @Override
     public UserDetails loadUserByUsername (String email) throws UsernameNotFoundException {
 
         User user = userRepository.findByEmail(email);
@@ -34,16 +35,20 @@ public class FDbUserDetailsService implements UserDetailsService {
         }
         String firstName = user.getFirstName();
         String lastName = user.getLastName();
+        String subjectName = user.getSubjectName();
         boolean enabled = true;
         boolean accountNonExpired = true;
         boolean credentialsNonExpired = true;
         boolean accountNonLocked = true;
 
         return new CustomUser(user.getEmail(), user.getPassword(),
-                enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, getAuthorities(user.getRoles()), firstName, lastName);
+                enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, getAuthorities(user.getRoles()), firstName, lastName, subjectName);
     }
 
     private static Collection<? extends GrantedAuthority> getAuthorities(List<Role> roles) {
       return roles.stream().map(role -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toList());
     }
+
+
+
 }

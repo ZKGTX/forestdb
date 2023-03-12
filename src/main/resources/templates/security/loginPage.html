@@ -10,7 +10,7 @@
 </head>
 <body>
 <div class="container">
-    <h1>Добро пожаловать в RusForestDB! Войдите или зарегистрируйтесь</h1>
+    <h1>Добро пожаловать в RiskyForest! Войдите или зарегистрируйтесь</h1>
 
     <div th:if="${param.error}" class="alert alert-danger">Неправильный адрес почты и/или пароль.</div>
     <div th:if="${param.logout}" class="alert alert-success">Вы вышли из системы.</div>
@@ -32,9 +32,16 @@
         <div class="form-actions col-xs-offset-2 col-xs-10">
             <input type="submit" class="btn btn-success" value="Вход" />
             <a class="btn btn-primary" th:href="@{/signup}">Регистрация</a>
+            <a class="btn btn-warning btn-sm" th:href="@{/downloads/userManual}">инструкция</a>
         </div>
     </form>
+    <div class="col-xs-offset-2 col-xs-10">
+        <a th:href="@{/forgotPassword}">я не помню пароль</a>
+    </div>
 </div>
+
+
+
 
 </body>
 </html>

@@ -14,8 +14,8 @@
 <div class="container">
     <h6 align="right">
         <div sec:authorize="isAuthenticated()">
-            <div sec:authentication="principal.lastName"></div>
             <div sec:authentication="principal.firstName"></div>
+            <div sec:authentication="principal.lastName"></div>
         </div>
         <a th:href="@{/doLogout}" class="btn btn-outline-secondary btn-sm mb-3 pull-right"
            onclick="if (!(confirm('Вы действительно хотите завершить работу и выйти из системы?'))) return false"> Выйти из системы </a>
@@ -24,21 +24,21 @@
     <hr>
     <h3 align="center">Риски, вызванные климатическими изменениями:</h3>
     <hr>
-    <form th:action="@{/risks(subjectId=${subject.id})}" method="get" class="form-horizontal">
+<!--    <form th:action="@{/risks(subjectId=${subject.id})}" method="get" class="form-horizontal">-->
 
-        <div class="input-group">
-            <input th:value="${keyword != null} ? ${keyword}" name="keyword" placeholder="название климатического риска" class="form-control" />
-            <input type="hidden" th:value="${subject.id}" name="subjectId" placeholder="id субъекта" class="form-control" />
-        </div>
+<!--        <div class="input-group">-->
+<!--            <input th:value="${keyword != null} ? ${keyword}" name="keyword" placeholder="название климатического риска" class="form-control" />-->
+<!--            <input type="hidden" th:value="${subject.id}" name="subjectId" placeholder="id субъекта" class="form-control" />-->
+<!--        </div>-->
 
-        <div style="margin-top: 10px" class="form-group">
-            <div class="col-sm-6 controls">
-                <button type="submit" class="btn btn-primary">поиск</button>
-            </div>
-        </div>
-    </form>
+<!--        <div style="margin-top: 10px" class="form-group">-->
+<!--            <div class="col-sm-6 controls">-->
+<!--                <button type="submit" class="btn btn-primary">поиск</button>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </form>-->
 
-        <a th:href="@{/risks/add(subjectId=${subject.id})}"
+        <a sec:authorize="hasAuthority('admin')" th:href="@{/risks/add(subjectId=${subject.id})}"
        class="btn btn-success mb-3">
         + добавить климатический риск
     </a>
@@ -51,8 +51,9 @@
         <tr>
             <th>Наименование риска</th>
             <th>Действие</th>
-        </tr>>
-        </thead>>
+            <th>Изменено:</th>
+        </tr>
+        </thead>
         <tbody>
         <tr th:each="tempRisk : ${allRisks}">
             <td th:text="${tempRisk.name}"/>
@@ -63,24 +64,23 @@
                 </a>
 
                 <a sec:authorize="hasAuthority('admin')" th:href="@{/risks/reports(riskId=${tempRisk.id})}"
-                   class="btn btn-success btn-sm">
+                   class="btn btn-primary btn-sm">
                     отчеты по риску
                 </a>
 
-                <a th:href="@{/risks/update(riskId=${tempRisk.id})}"
+                <a sec:authorize="hasAuthority('admin')" th:href="@{/risks/update(riskId=${tempRisk.id})}"
                    class="btn btn-outline-secondary btn-sm">
                     изменить риск
                 </a>
 
-                <a th:href="@{/risks/delete(riskId=${tempRisk.id}, subjectId=${tempRisk.subject.id})}"
+                <a sec:authorize="hasAuthority('admin')" th:href="@{/risks/delete(riskId=${tempRisk.id}, subjectId=${tempRisk.subject.id})}"
                    class="btn btn-outline-danger btn-sm"
                    onclick="if (!(confirm('Вы действительно хотите удалить этот климатический риск? Все связанные с ним адаптационные меры также будут удалены'))) return false">
                     удалить риск
                 </a>
+            </td>
+            <td th:text="${tempRisk.lastUpdate}"/>
 
-
-
-            </td>>
         </tr>
         </tbody>
     </table>

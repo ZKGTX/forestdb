@@ -7,7 +7,7 @@ public class UserNotFoundException extends RuntimeException {
     }
 
     public UserNotFoundException(String email) {
-        super ("No user with emai " + email);
+        super ("Пользователь " + email + " не существует");
     }
 
 }

@@ -29,10 +29,16 @@
                class="form-control mb-4 col-4" placeholder="Мероприятие ID">
 
         <input type="text" th:field="*{name}"
-               class="form-control mb-4 col-4" placeholder="Название мероприятия">
+               class="form-control mb-4" placeholder="название мероприятия">
 
         <p th:if="${#fields.hasErrors('name')}" th:errorclass="error" th:errors="*{name}"
            class="alert alert-danger" role="alert"/>
+
+        <textarea class="form-control mb-4" th:field="*{commentary}" placeholder="комментарий" rows="3"></textarea>
+
+
+        <input type="hidden" th:field="*{original}"
+               class="form-control mb-4 col-4" placeholder="Оригинальное мероприятие субъекта">
 
 
         <button type="submit" class="btn btn-success col-2">Сохранить</button>

@@ -14,8 +14,8 @@
 <div class="container">
     <h6 align="right">
         <div sec:authorize="isAuthenticated()">
-            <div sec:authentication="principal.lastName"></div>
             <div sec:authentication="principal.firstName"></div>
+            <div sec:authentication="principal.lastName"></div>
         </div>
         <a th:href="@{/doLogout}" class="btn btn-outline-secondary btn-sm mb-3 pull-right"
            onclick="if (!(confirm('Вы действительно хотите завершить работу и выйти из системы?'))) return false"> Выйти из системы </a>
@@ -26,34 +26,36 @@
     <hr>
     <h4 align="center">Адаптационные меры:</h4>
     <hr>
-    <form th:action="@{/measures(riskId=${risk.id})}" method="get" class="form-horizontal">
+<!--    <form th:action="@{/measures(riskId=${risk.id})}" method="get" class="form-horizontal">-->
 
-        <div class="input-group">
-            <input th:value="${keyword != null} ? ${keyword}" name="keyword" placeholder="название адаптационной меры" class="form-control" />
-            <input type="hidden" th:value="${risk.id}" name="riskId" placeholder="id риска" class="form-control" />
-        </div>
+<!--        <div class="input-group">-->
+<!--            <input th:value="${keyword != null} ? ${keyword}" name="keyword" placeholder="название адаптационной меры" class="form-control" />-->
+<!--            <input type="hidden" th:value="${risk.id}" name="riskId" placeholder="id риска" class="form-control" />-->
+<!--        </div>-->
 
-        <div style="margin-top: 10px" class="form-group">
-            <div class="col-sm-6 controls">
-                <button type="submit" class="btn btn-primary">поиск</button>
-            </div>
-        </div>
-    </form>
+<!--        <div style="margin-top: 10px" class="form-group">-->
+<!--            <div class="col-sm-6 controls">-->
+<!--                <button type="submit" class="btn btn-primary">поиск</button>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </form>-->
 
-    <a th:href="@{/measures/add(riskId=${risk.id})}"
+    <a sec:authorize="hasAuthority('admin')" th:href="@{/measures/add(riskId=${risk.id})}"
        class="btn btn-success mb-3">
         + добавить адаптационную меру
     </a>
 
     <a th:href="@{/risks(subjectId=${risk.subject.id})}" class="btn btn-outline-primary btn-sm mb-3"> ← назад к списку климатических рисков</a>
+    <a th:href="@{/subjects}" class="btn btn-outline-secondary btn-sm mb-3"> ↑ назад к списку субъектов РФ</a>
 
     <table class="table table-hover table-bordered table-striped">
         <thead class="thead-light">
         <tr>
             <th>Наименование меры</th>
             <th>Действие</th>
-        </tr>>
-        </thead>>
+            <th>Изменено:</th>
+        </tr>
+        </thead>
         <tbody>
         <tr th:each="tempMeasure : ${allMeasures}">
             <td th:text="${tempMeasure.name}"/>
@@ -63,20 +65,18 @@
                     → список мероприятий
                 </a>
 
-                <a th:href="@{/measures/update(measureId=${tempMeasure.id})}"
+                <a sec:authorize="hasAuthority('admin')" th:href="@{/measures/update(measureId=${tempMeasure.id})}"
                    class="btn btn-outline-secondary btn-sm">
                     изменить меру
                 </a>
 
-                <a th:href="@{/measures/delete(measureId=${tempMeasure.id}, riskId=${tempMeasure.risk.id})}"
+                <a sec:authorize="hasAuthority('admin')" th:href="@{/measures/delete(measureId=${tempMeasure.id}, riskId=${tempMeasure.risk.id})}"
                    class="btn btn-outline-danger btn-sm"
                    onclick="if (!(confirm('Вы действительно хотите удалить эту адаптационную меру? Все связанные с ней мероприятия также будут удалены.'))) return false">
                     удалить меру
                 </a>
-
-
-
-            </td>>
+            </td>
+            <td th:text="${tempMeasure.lastUpdate}"/>
         </tr>
         </tbody>
     </table>

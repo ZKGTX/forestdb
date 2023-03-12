@@ -17,7 +17,7 @@ public class Measure {
 
     @Column(name = "name")
     @NotNull(message = "название адаптационной меры не может быть пустым")
-    @Pattern(regexp="[а-яёА-ЯЁ ,.()-]+", message = "название адаптационной меры должно состоять только из русских букв")
+    @Pattern(regexp="[а-яёА-ЯЁ0-9 ,.()-]+", message = "название адаптационной меры должно состоять только из русских букв")
     private String name;
 
     @ManyToOne
@@ -26,6 +26,9 @@ public class Measure {
 
     @OneToMany(mappedBy = "measure", fetch = FetchType.LAZY)
     private List<Action> actions;
+
+    @Column(name = "last_update")
+    private String lastUpdate;
 
     public Measure() {
     }
@@ -64,6 +67,14 @@ public class Measure {
 
     public void setActions(List<Action> actions) {
         this.actions = actions;
+    }
+
+    public String getLastUpdate() {
+        return lastUpdate;
+    }
+
+    public void setLastUpdate(String lastUpdate) {
+        this.lastUpdate = lastUpdate;
     }
 
     @Override

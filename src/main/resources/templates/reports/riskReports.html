@@ -24,7 +24,7 @@
   <hr>
   <h3>Отчеты:</h3>
   <hr>
-
+  <div class="alert alert-error" role="alert" th:text="${exportError}" th:if="${error}"></div>
   <table class="table table-striped">
     <thead class="thead-light">
     <tr>
@@ -44,7 +44,7 @@
 
     </tbody>
   </table>
-  <a th:href="@{/subjects/reports(subjectId = ${risk.subject.id})}">Назад к списку отчетов по субъекту</a>
+  <a th:href="@{/subjects/reports(subjectId = ${risk.subject.id})}">назад к списку отчетов по субъекту</a>
 </div>
 </body>
 </html>

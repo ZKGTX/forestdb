@@ -11,7 +11,7 @@ import javax.persistence.criteria.Root;
 
 public class ActionSpecs {
     public static Specification<Action> nameContains (String keyword) {
-        return (root, query, criteriaBuilder) -> criteriaBuilder.like(root.get("name"), "%" + keyword + "%");
+        return (root, query, criteriaBuilder) -> criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + keyword + "%");
     }
 
     public static Specification<Action> measureIdEqualsTo (Long measureId) {

@@ -44,10 +44,15 @@
         </div>
     </form>
 
-    <a th:href="@{/years/add(actionId=${action.id})}"
+    <a sec:authorize="hasAuthority('admin')" th:href="@{/years/add(actionId=${action.id})}"
        class="btn btn-success mb-3">
-        + добавить ежегодный отчет по мероприятию
+        + добавить ежегодный отчет
     </a>
+
+<!--    <a sec:authorize="hasAuthority('user')" th:href="@{/years/addNew(actionId=${action.id})}"-->
+<!--       class="btn btn-success mb-3">-->
+<!--        + добавить ежегодный отчет-->
+<!--    </a>-->
 
     <a th:href="@{/actions(measureId=${action.measure.id})}" class="btn btn-outline-primary btn-sm mb-3"> ← назад к списку мероприятий</a>
     <a th:href="@{/subjects}" class="btn btn-outline-secondary btn-sm mb-3"> ↑ назад к списку субъектов РФ</a>
@@ -56,31 +61,26 @@
         <thead class="thead-light">
         <tr>
             <th>Год</th>
-            <th sec:authorize="hasAuthority('admin')">ПЛАН РАБОТ ПО ЛЕСНОМУ ПЛАНУ</th>
             <th>Объем работ (по плану)</th>
             <th>Объем работ (фактический)</th>
             <th>Ед.изм. работ</th>
-            <th sec:authorize="hasAuthority('admin')">ПЛАН СТОИМОСТИ ПО ЛЕСНОМУ ПЛАНУ</th>
             <th>Стоимость работ (по плану)</th>
             <th>Стоимость работ (фактическая)</th>
             <th>Ед.изм. стоимости</th>
             <th>Примечание</th>
             <th>Действие</th>
-        </tr>>
-        </thead>>
+            <th>Изменено</th>
+        </tr>
+        </thead>
         <tbody>
         <tr th:each="tempReportingYear : ${allReportingYears}">
             <td th:text="${tempReportingYear.year}"/>
-
-            <td sec:authorize="hasAuthority('admin')" th:text="${tempReportingYear.trueWorkPlan}"/>
 
             <td th:text="${tempReportingYear.plannedWorkAmount}"/>
 
             <td th:text="${tempReportingYear.actualWorkAmount}"/>
 
             <td th:text="${tempReportingYear.workMeasuringUnits}"/>
-
-            <td sec:authorize="hasAuthority('admin')" th:text="${tempReportingYear.trueCostPlan}"/>
 
             <td th:text="${tempReportingYear.plannedWorkCost}"/>
 
@@ -91,18 +91,30 @@
             <td th:text="${tempReportingYear.commentary}"/>
 
             <td>
-                <a th:href="@{/years/update(reportingYearId=${tempReportingYear.id})}"
+                <a sec:authorize="hasAuthority('admin')" th:href="@{/years/update(reportingYearId=${tempReportingYear.id})}"
                    class="btn btn-outline-secondary btn-sm">
                     изменить отчет
                 </a>
 
-                <a th:href="@{/years/delete(reportingYearId=${tempReportingYear.id}, actionId=${tempReportingYear.action.id})}"
+                <a sec:authorize="hasAuthority('user')" th:href="@{/years/updateYear(reportingYearId=${tempReportingYear.id})}"
+                   class="btn btn-success btn-sm">
+                     + внести данные в отчет
+                </a>
+
+                <a sec:authorize="hasAuthority('user')" th:href="@{/years/updatePlans(reportingYearId=${tempReportingYear.id})}"
+                   class="btn btn-primary btn-sm">
+                    изменить плановые показатели
+                </a>
+
+                <a sec:authorize="hasAuthority('admin')" th:href="@{/years/delete(reportingYearId=${tempReportingYear.id}, actionId=${tempReportingYear.action.id})}"
                    class="btn btn-outline-danger btn-sm"
                    onclick="if (!(confirm('Вы действительно хотите удалить этот отчетный год?'))) return false">
                     удалить отчет
                 </a>
 
-            </td>>
+            </td>
+            <td th:text="${tempReportingYear.lastUpdate}"/>
+
         </tr>
         </tbody>
     </table>

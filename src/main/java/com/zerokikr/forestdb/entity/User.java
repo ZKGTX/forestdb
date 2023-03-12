@@ -30,6 +30,11 @@ public class User {
     @Pattern(regexp="[а-яёА-ЯЁ ,.()-]+", message = "фамилия только из русских букв")
     private String lastName;
 
+
+    @Column(name="subject_name")
+    @NotNull(message = "выберите ваш субъект РФ из списка")
+    private String subjectName;
+
     @Column(name = "password")
     @NotNull (message = "введите пароль")
     private String password;
@@ -44,14 +49,18 @@ public class User {
                 inverseJoinColumns = @JoinColumn(name = "role_id"))
     private List<Role> roles = new ArrayList<>();
 
+    @Column(name = "reset_password_token")
+    private String resetPasswordToken;
+
     public User() {
     }
 
-    public User(String email, String firstName, String last_name, String password, String passwordConfirm, List<Role> roles) {
+    public User(String email, String firstName, String last_name, String subjectName, String password, String passwordConfirm, List<Role> roles) {
         this.id = id;
         this.email = email;
         this.firstName = firstName;
         this.lastName = last_name;
+        this.subjectName = subjectName;
         this.password = password;
         this.confirmedPassword = passwordConfirm;
         this.roles = roles;
@@ -115,6 +124,22 @@ public class User {
 
     public void setRoles(List<Role> roles) {
         this.roles = roles;
+    }
+
+    public String getSubjectName() {
+        return subjectName;
+    }
+
+    public void setSubjectName(String subjectName) {
+        this.subjectName = subjectName;
+    }
+
+    public String getResetPasswordToken() {
+        return resetPasswordToken;
+    }
+
+    public void setResetPasswordToken(String resetPasswordToken) {
+        this.resetPasswordToken = resetPasswordToken;
     }
 
     @Override

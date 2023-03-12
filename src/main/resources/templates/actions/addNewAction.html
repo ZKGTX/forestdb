@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <title>Добавить мероприятие</title>
+</head>
+
+<body>
+
+<div class="container">
+    <h4>Добавить / изменить мероприятие</h4>
+    <hr>
+
+    <p class="h4 mb-4">Введите название нового мероприятия и комментарий (основание для введения мероприятия): </p>
+
+    <form action="#" th:action="@{/actions/saveNew}"
+          th:object="${action}" method="POST">
+
+        <input type="hidden" th:field="*{measure.id}"
+               class="form-control mb-4 col-4" placeholder="Адаптационная мера ID">
+
+        <input type="hidden" th:field="*{id}"
+               class="form-control mb-4 col-4" placeholder="Мероприятие ID">
+
+        <input type="text" th:field="*{name}"
+               class="form-control mb-4" placeholder="название мероприятия">
+
+        <p th:if="${#fields.hasErrors('name')}" th:errorclass="error" th:errors="*{name}"
+           class="alert alert-danger" role="alert"/>
+
+        <textarea class="form-control mb-4" th:field="*{commentary}" placeholder="комментарий" rows="3"></textarea>
+
+        <p th:if="${#fields.hasGlobalErrors()}" th:each="commentError : ${#fields.errors('global')}" th:text="${commentError}" class="alert alert-danger" />
+
+        <input type="hidden" th:field="*{original}"
+               class="form-control mb-4 col-4" placeholder="Оригинальное мероприятие субъекта">
+
+        <button type="submit" class="btn btn-success col-2">Сохранить</button>
+    </form>
+    <hr>
+    <a th:href="@{/actions(measureId=${action.measure.id})}"
+       class="btn btn-outline-primary btn-sm mb-3">Назад к списку мероприятий</a>
+</div>
+</body>
+
+</html>

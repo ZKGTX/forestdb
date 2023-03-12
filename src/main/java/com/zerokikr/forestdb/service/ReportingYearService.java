@@ -52,6 +52,64 @@ public class ReportingYearService {
         reportingYearRepository.deleteById(id);
     }
 
+    public String noComments(String comment) {
+        String message = "";
+        if (comment == null) {
+            message = "фактический объем работ меньше планового. укажите в примечании причину выполнения мероприятия не в полном объёме";
+        }
+        return message;
+    }
+
+    public String noPlanComments (String comment) {
+        String message = "";
+        if (comment == null) {
+            message = "для изменения планового показателя укажите основание (нормативно-правовой акт) в примечании";
+        }
+        return message;
+    }
+
+    public String workAmountsDiffer (String plannedWorkAmount, String actualWorkAmount, String comment) {
+        String message = "";
+        BigDecimal plannedAmount = cleanValue(plannedWorkAmount);
+        BigDecimal actualAmount = cleanValue(actualWorkAmount);
+        if (actualAmount.compareTo(plannedAmount) < 0) {
+            message = noComments(comment);
+        }
+        return message;
+    }
+
+    public String workPlansChanged (String currentWorkAmount, String plannedWorkAmount, String comment) {
+        String message = "";
+        BigDecimal currentWork = cleanValue(currentWorkAmount);
+        BigDecimal plannedWork = cleanValue(plannedWorkAmount);
+        if (currentWork.compareTo(plannedWork) !=0 ) {
+            message = noPlanComments(comment);
+        }
+        return message;
+    }
+
+    public String costPlansChanged (String currentWorkCost, String plannedWorkCost, String comment) {
+        String message = "";
+        BigDecimal currentCost = cleanValue(currentWorkCost);
+        BigDecimal plannedCost = cleanValue(plannedWorkCost);
+        if (currentCost.compareTo(plannedCost) !=0 ) {
+            message = noPlanComments(comment);
+        }
+        return message;
+    }
+
+    public BigDecimal cleanValue (String rawValue) throws NumberFormatException {
+        String cleanValue = convertCommasToDots(removeStars(rawValue));
+        return new BigDecimal(cleanValue);
+    }
+
+    public String convertCommasToDots (String s) {
+        return s.replaceAll("[,]+",".");
+    }
+
+    public String removeStars (String s) {
+        return s.replaceAll("[*]+", "");
+    }
 
 
 

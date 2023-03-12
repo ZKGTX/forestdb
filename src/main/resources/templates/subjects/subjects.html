@@ -15,15 +15,16 @@
 
     <h6 align="right">
         <div sec:authorize="isAuthenticated()">
-                <div sec:authentication="principal.lastName"></div>
-                <div sec:authentication="principal.firstName"></div>
+            <div sec:authentication="principal.firstName"></div>
+            <div sec:authentication="principal.lastName"></div>
             </div>
         <a th:href="@{/doLogout}" class="btn btn-outline-secondary btn-sm mb-3 pull-right"
            onclick="if (!(confirm('Вы действительно хотите завершить работу и выйти из системы?'))) return false"> Выйти из системы </a>
     </h6>
     <h2 align="center">Субъекты Российской Федерации: </h2>
 <hr>
-    <form th:action="@{/subjects}" method="get" class="form-horizontal">
+
+    <form sec:authorize="hasAuthority('admin')" th:action="@{/subjects}" method="get" class="form-horizontal">
         <div class="input-group">
             <input th:value="${keyword != null} ? ${keyword}" name="keyword" placeholder="название субъекта" class="form-control" />
         </div>
@@ -35,9 +36,14 @@
         </div>
     </form>
 
-    <a th:href="@{/subjects/add}"
+    <a sec:authorize="hasAuthority('admin')" th:href="@{/subjects/add}"
        class="btn btn-success mb-3">
         + добавить субъект РФ
+    </a>
+
+    <a sec:authorize="hasAuthority('admin')" th:href="@{/subjects/exportAll}"
+       class="btn btn-sm btn-success mb-3">
+        ↓ процент выполненных мероприятий (все субъекты)
     </a>
 
 
@@ -46,8 +52,9 @@
         <tr>
             <th>Название субъекта</th>
             <th>Действие</th>
-        </tr>>
-    </thead>>
+            <th>Изменено:</th>
+        </tr>
+    </thead>
     <tbody>
     <tr th:each="tempSubject : ${allSubjects}">
         <td th:text="${tempSubject.name}"/>
@@ -59,22 +66,23 @@
             </a>
 
             <a sec:authorize="hasAuthority('admin')" th:href="@{/subjects/reports(subjectId = ${tempSubject.id})}"
-               class="btn btn-success btn-sm">
+               class="btn btn-primary btn-sm">
                 отчеты по субъекту
             </a>
 
-            <a th:href="@{/subjects/update(subjectId=${tempSubject.id})}"
+            <a sec:authorize="hasAuthority('admin')" th:href="@{/subjects/update(subjectId=${tempSubject.id})}"
                 class="btn btn-outline-secondary btn-sm">
                 изменить субъект
             </a>
 
-            <a th:href="@{/subjects/delete(subjectId=${tempSubject.id})}"
+            <a sec:authorize="hasAuthority('admin')" th:href="@{/subjects/delete(subjectId=${tempSubject.id})}"
                 class="btn btn-outline-danger btn-sm"
                 onclick="if (!(confirm('Вы действительно хотите удалить этот субъект РФ? Все связанные с ним записи о рисках также будут удалены.'))) return false">
                 удалить субъект
             </a>
 
-        </td>>
+        </td>
+        <td th:text="${tempSubject.lastUpdate}"/>
     </tr>
     </tbody>
 </table>

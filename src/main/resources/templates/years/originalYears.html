@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <title>Ежегодные отчеты: </title>
+</head>
+<body>
+<div class="container">
+    <h6 align="right">
+        <div sec:authorize="isAuthenticated()">
+            <div sec:authentication="principal.lastName"></div>
+            <div sec:authentication="principal.firstName"></div>
+        </div>
+        <a th:href="@{/doLogout}" class="btn btn-outline-secondary btn-sm mb-3 pull-right"
+           onclick="if (!(confirm('Вы действительно хотите завершить работу и выйти из системы?'))) return false"> Выйти из системы </a>
+    </h6>
+    <h5 align="center"> <span th:text="${action.measure.risk.subject.name}"></span></h5>
+    <hr>
+    <h5 align="center"> <span th:text="${action.measure.risk.name}"></span></h5>
+    <hr>
+    <h5 align="center"> <span th:text="${action.measure.name}"></span></h5>
+    <hr>
+    <h5 align="center"> <span th:text="${action.name}"></span></h5>
+    <hr>
+    <h5 align="center">Ежегодные отчеты: </h5>
+    <hr>
+    <form th:action="@{/years(actionId=${action.id})}" method="get" class="form-horizontal">
+
+        <div class="input-group">
+            <input th:value="${year != null} ? ${year}" name="year" placeholder="год" class="form-control" />
+            <input type="hidden" th:value="${action.id}" name="actionId" placeholder="id мероприятия" class="form-control" />
+        </div>
+
+        <div style="margin-top: 10px" class="form-group">
+            <div class="col-sm-6 controls">
+                <button type="submit" class="btn btn-primary">поиск</button>
+            </div>
+        </div>
+    </form>
+
+    <a sec:authorize="hasAuthority('admin')" th:href="@{/years/add(actionId=${action.id})}"
+       class="btn btn-success mb-3">
+        + добавить ежегодный отчет
+    </a>
+
+    <a sec:authorize="hasAuthority('user')" th:href="@{/years/addNew(actionId=${action.id})}"
+       class="btn btn-success mb-3">
+        + добавить ежегодный отчет
+    </a>
+
+    <a th:href="@{/actions(measureId=${action.measure.id})}" class="btn btn-outline-primary btn-sm mb-3"> ← назад к списку мероприятий</a>
+    <a th:href="@{/subjects}" class="btn btn-outline-secondary btn-sm mb-3"> ↑ назад к списку субъектов РФ</a>
+
+    <table class="table table-hover table-bordered table-striped">
+        <thead class="thead-light">
+        <tr>
+            <th>Год</th>
+            <th>Объем работ (по плану)</th>
+            <th>Объем работ (фактический)</th>
+            <th>Ед.изм. работ</th>
+            <th>Стоимость работ (по плану)</th>
+            <th>Стоимость работ (фактическая)</th>
+            <th>Ед.изм. стоимости</th>
+            <th>Примечание</th>
+            <th>Действие</th>
+            <th>Изменено:</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="tempReportingYear : ${allReportingYears}">
+            <td th:text="${tempReportingYear.year}"/>
+
+            <td th:text="${tempReportingYear.plannedWorkAmount}"/>
+
+            <td th:text="${tempReportingYear.actualWorkAmount}"/>
+
+            <td th:text="${tempReportingYear.workMeasuringUnits}"/>
+
+            <td th:text="${tempReportingYear.plannedWorkCost}"/>
+
+            <td th:text="${tempReportingYear.actualWorkCost}"/>
+
+            <td th:text="${tempReportingYear.costMeasuringUnits}"/>
+
+            <td th:text="${tempReportingYear.commentary}"/>
+
+            <td>
+                <a  th:href="@{/years/updateNew(reportingYearId=${tempReportingYear.id})}"
+                   class="btn btn-outline-secondary btn-sm">
+                    изменить отчет
+                </a>
+
+<!--                <a sec:authorize="hasAuthority('user')" th:href="@{/years/updateNew(reportingYearId=${tempReportingYear.id})}"-->
+<!--                   class="btn btn-primary btn-sm">-->
+<!--                    + внести данные в отчет-->
+<!--                </a>-->
+
+                <a th:href="@{/years/delete(reportingYearId=${tempReportingYear.id}, actionId=${tempReportingYear.action.id})}"
+                   class="btn btn-outline-danger btn-sm"
+                   onclick="if (!(confirm('Вы действительно хотите удалить этот отчетный год?'))) return false">
+                    удалить отчет
+                </a>
+
+            </td>
+            <td th:text="${tempReportingYear.lastUpdate}"/>
+
+        </tr>
+        </tbody>
+    </table>
+    <a th:href="@{/actions(measureId=${action.measure.id})}">Назад к списку мероприятий</a>
+</div>
+</body>
+</html>

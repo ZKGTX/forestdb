@@ -14,28 +14,36 @@
 <body>
 
 <div class="container">
-    <h4>Добавить / изменить субъект РФ</h4>
+    <h3>Добавить / изменить субъект РФ</h3>
     <hr>
 
-    <p class="h4 mb-4">Введите название субъекта:</p>
+    <p class="h4 mb-4">Введите название субъекта: </p>
 
-    <form action="#" th:action="@{/subjects/save}"
-                     th:object="${subject}" method="POST">
+    <form th:action="@{/subjects/save}"
+          th:object="${subject}"
+          method="post" style="max-width: 600px; margin: 0 auto;">
+        <input type="hidden" th:field="*{id}" />
 
-        <input type="hidden" th:field="*{id}"/>
-
-        <input type="text" th:field="*{name}"
-                    class="form-control mb-4 col-4" placeholder="Название субъекта">
+        <div class="form-group row">
+            <label class="col-4 col-form-label">название субъекта РФ: </label>
+            <div class="col">
+                <input type="text" th:field="*{name}" class="form-control"
+                       />
+            </div>
+        </div>
 
         <p th:if="${#fields.hasErrors('name')}" th:errorclass="error" th:errors="*{name}"
            class="alert alert-danger" role="alert"/>
 
-        <button type="submit" class="btn btn-success col-2">Сохранить</button>
+        <div>
+            <button type="submit" class="btn btn-success">сохранить</button>
+        </div>
+</div>
+</form>
 
-    </form>
-    <hr>
-    <a th:href="@{/subjects}"
-       class="btn btn-outline-primary btn-sm mb-3">Назад к списку субъектов</a>
+<hr>
+<a th:href="@{/subjects}"
+   class="btn btn-outline-primary btn-sm mb-3">Назад к списку субъектов РФ</a>
 </div>
 </body>
 
